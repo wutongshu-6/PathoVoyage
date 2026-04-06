@@ -23187,4 +23187,29 @@ dl li {
   outline: 1px solid slategrey;
 }
 
+/* PathoVoyage: fixed left sidebar on desktop — stays visible while main content scrolls */
+@media (min-width: 992px) {
+  .page-body-wrapper > .sidebar.sidebar-offcanvas {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    height: calc(100vh - 60px);
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    z-index: 100;
+  }
+
+  .page-body-wrapper > .main-panel {
+    margin-left: 257px;
+    width: calc(100% - 257px);
+  }
+
+  .sidebar-icon-only .page-body-wrapper > .main-panel {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+}
+
 /*# sourceMappingURL=maps/style.css.map */

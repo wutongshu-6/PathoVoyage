@@ -52,54 +52,7 @@
           <div class="row">
             <div class="col-md-12 grid-margin">
               <h2>报告管理</h2>
-              <p class="mb-0">查看、导出与管理病理AI诊断报告</p>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-3 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body d-flex align-items-center">
-                  <i class="mdi mdi-file-document icon-lg me-3 text-primary"></i>
-                  <div class="d-flex flex-column justify-content-around">
-                    <small class="mb-1 text-muted">总报告数</small>
-                    <h5 class="me-2 mb-0 text-primary">118份</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body d-flex align-items-center">
-                  <i class="mdi mdi-alert icon-lg me-3 text-danger"></i>
-                  <div class="d-flex flex-column justify-content-around">
-                    <small class="mb-1 text-muted">阳性报告</small>
-                    <h5 class="me-2 mb-0 text-danger">32份</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body d-flex align-items-center">
-                  <i class="mdi mdi-check-circle icon-lg me-3 text-success"></i>
-                  <div class="d-flex flex-column justify-content-around">
-                    <small class="mb-1 text-muted">阴性报告</small>
-                    <h5 class="me-2 mb-0 text-success">76份</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body d-flex align-items-center">
-                  <i class="mdi mdi-clock-outline icon-lg me-3 text-warning"></i>
-                  <div class="d-flex flex-column justify-content-around">
-                    <small class="mb-1 text-muted">待复核报告</small>
-                    <h5 class="me-2 mb-0 text-warning">10份</h5>
-                  </div>
-                </div>
-              </div>
+              <p class="mb-0">病理AI诊断报告的检索、复核、导出与归档管理</p>
             </div>
           </div>
 
@@ -107,23 +60,24 @@
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">筛选条件</p>
+                  <p class="card-title">报告检索与筛选</p>
                   <form class="forms-sample">
                     <div class="row">
                       <div class="col-md-3">
                         <div class="form-group">
-                          <label>切片编号</label>
-                          <input type="text" class="form-control" placeholder="请输入切片编号" id="report_filter_slide_id">
+                          <label>报告编号 / 切片编号</label>
+                          <input type="text" class="form-control" placeholder="输入报告编号或切片编号" id="report_filter_slide_id">
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="form-group">
-                          <label>时间范围</label>
-                          <select class="form-control" id="report_filter_time">
+                          <label>报告状态</label>
+                          <select class="form-control" id="report_filter_status">
                             <option>全部</option>
-                            <option>近7天</option>
-                            <option>近30天</option>
-                            <option>自定义</option>
+                            <option>待复核</option>
+                            <option>已确认</option>
+                            <option>已归档</option>
+                            <option>已驳回</option>
                           </select>
                         </div>
                       </div>
@@ -138,12 +92,22 @@
                           </select>
                         </div>
                       </div>
-                      <div class="col-md-3 d-flex align-items-end">
-                        <div class="form-group w-100">
-                          <label class="d-block">&nbsp;</label>
-                          <button type="button" class="btn btn-primary mr-2" id="report_query_btn">查询</button>
-                          <button type="button" class="btn btn-light" id="report_reset_btn">重置</button>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label>创建时间</label>
+                          <select class="form-control" id="report_filter_time">
+                            <option>全部</option>
+                            <option>近7天</option>
+                            <option>近30天</option>
+                            <option>自定义</option>
+                          </select>
                         </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <button type="button" class="btn btn-primary mr-2" id="report_query_btn">查询</button>
+                        <button type="button" class="btn btn-light" id="report_reset_btn">重置</button>
                       </div>
                     </div>
                     <div class="row mt-2" id="report_custom_dates_row" style="display:none;">
@@ -160,7 +124,7 @@
                         </div>
                       </div>
                       <div class="col-md-6 d-flex align-items-end">
-                        <p class="text-muted small mb-0">选择「自定义」时按上传日期筛选；留空一侧表示不限制该端。</p>
+                        <p class="text-muted small mb-0">选择「自定义」时按创建时间筛选；留空一侧表示不限制该端。</p>
                       </div>
                     </div>
                   </form>
@@ -170,117 +134,177 @@
           </div>
 
           <div class="row">
+            <div class="col-md-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body d-flex align-items-center">
+                  <i class="mdi mdi-clock-outline icon-lg me-3 text-warning"></i>
+                  <div class="d-flex flex-column justify-content-around">
+                    <small class="mb-1 text-muted">待复核报告</small>
+                    <h5 class="me-2 mb-0 text-warning">10份</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body d-flex align-items-center">
+                  <i class="mdi mdi-check-circle icon-lg me-3 text-success"></i>
+                  <div class="d-flex flex-column justify-content-around">
+                    <small class="mb-1 text-muted">已确认报告</small>
+                    <h5 class="me-2 mb-0 text-success">86份</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body d-flex align-items-center">
+                  <i class="mdi mdi-archive icon-lg me-3 text-info"></i>
+                  <div class="d-flex flex-column justify-content-around">
+                    <small class="mb-1 text-muted">已归档报告</small>
+                    <h5 class="me-2 mb-0 text-info">24份</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body d-flex align-items-center">
+                  <i class="mdi mdi-close-circle icon-lg me-3 text-danger"></i>
+                  <div class="d-flex flex-column justify-content-around">
+                    <small class="mb-1 text-muted">已驳回报告</small>
+                    <h5 class="me-2 mb-0 text-danger">5份</h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-12 stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title">最近诊断报告</p>
+                  <p class="card-title">报告列表</p>
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>切片编号</th>
-                          <th>上传时间</th>
-                          <th>诊断结果</th>
+                          <th>报告编号</th>
+                          <th>关联切片编号</th>
+                          <th>报告状态</th>
+                          <th>创建时间</th>
+                          <th>最后修改时间</th>
                           <th>操作</th>
                         </tr>
                       </thead>
                       <tbody id="report_table_body">
-                        <tr data-slide="SLIDE-0001" data-upload="2026-04-03T09:20" data-result="positive">
-                          <td>SLIDE-0001</td>
+                        <tr data-slide="RPT-20260403-001 SLIDE-0108" data-upload="2026-04-03T09:20" data-result="pending">
+                          <td>RPT-20260403-001</td>
+                          <td>SLIDE-0108</td>
+                          <td><span class="badge badge-warning text-dark">待复核</span></td>
                           <td>2026-04-03 09:20</td>
-                          <td><span class="badge badge-danger text-white">疑似阳性</span></td>
+                          <td>2026-04-03 09:55</td>
                           <td>
                             <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary">归档</button>
                           </td>
                         </tr>
-                        <tr data-slide="SLIDE-0002" data-upload="2026-04-03T10:05" data-result="negative">
-                          <td>SLIDE-0002</td>
-                          <td>2026-04-03 10:05</td>
-                          <td><span class="badge badge-success text-white">阴性</span></td>
+                        <tr data-slide="RPT-20260402-018 SLIDE-0092" data-upload="2026-04-02T14:22" data-result="negative">
+                          <td>RPT-20260402-018</td>
+                          <td>SLIDE-0092</td>
+                          <td><span class="badge badge-success">已确认</span></td>
+                          <td>2026-04-02 14:22</td>
+                          <td>2026-04-02 16:08</td>
                           <td>
                             <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary">归档</button>
                           </td>
                         </tr>
-                        <tr data-slide="SLIDE-0003" data-upload="2026-04-03T10:48" data-result="pending">
-                          <td>SLIDE-0003</td>
-                          <td>2026-04-03 10:48</td>
-                          <td><span class="badge badge-warning text-dark">待复核</span></td>
+                        <tr data-slide="RPT-20260401-006 SLIDE-0071" data-upload="2026-04-01T09:40" data-result="positive">
+                          <td>RPT-20260401-006</td>
+                          <td>SLIDE-0071</td>
+                          <td><span class="badge badge-info">已归档</span></td>
+                          <td>2026-04-01 09:40</td>
+                          <td>2026-04-02 10:12</td>
                           <td>
                             <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary">归档</button>
                           </td>
                         </tr>
-                        <tr data-slide="SLIDE-0004" data-upload="2026-04-02T14:12" data-result="negative">
-                          <td>SLIDE-0004</td>
-                          <td>2026-04-02 14:12</td>
-                          <td><span class="badge badge-success text-white">阴性</span></td>
+                        <tr data-slide="RPT-20260328-031 SLIDE-0065" data-upload="2026-03-28T16:05" data-result="negative">
+                          <td>RPT-20260328-031</td>
+                          <td>SLIDE-0065</td>
+                          <td><span class="badge badge-danger">已驳回</span></td>
+                          <td>2026-03-28 16:05</td>
+                          <td>2026-03-29 11:20</td>
                           <td>
                             <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
-                          </td>
-                        </tr>
-                        <tr data-slide="SLIDE-0005" data-upload="2026-04-02T15:30" data-result="positive">
-                          <td>SLIDE-0005</td>
-                          <td>2026-04-02 15:30</td>
-                          <td><span class="badge badge-danger text-white">疑似阳性</span></td>
-                          <td>
-                            <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
-                          </td>
-                        </tr>
-                        <tr data-slide="SLIDE-0006" data-upload="2026-04-01T08:45" data-result="pending">
-                          <td>SLIDE-0006</td>
-                          <td>2026-04-01 08:45</td>
-                          <td><span class="badge badge-warning text-dark">待复核</span></td>
-                          <td>
-                            <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
-                          </td>
-                        </tr>
-                        <tr data-slide="SLIDE-0007" data-upload="2026-04-01T11:20" data-result="negative">
-                          <td>SLIDE-0007</td>
-                          <td>2026-04-01 11:20</td>
-                          <td><span class="badge badge-success text-white">阴性</span></td>
-                          <td>
-                            <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
-                          </td>
-                        </tr>
-                        <tr data-slide="SLIDE-0008" data-upload="2026-03-31T16:05" data-result="positive">
-                          <td>SLIDE-0008</td>
-                          <td>2026-03-31 16:05</td>
-                          <td><span class="badge badge-danger text-white">疑似阳性</span></td>
-                          <td>
-                            <button type="button" class="btn btn-sm btn-outline-primary mr-1">查看</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary mr-1">导出PDF</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary">重新分析</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary">归档</button>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
-                  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4">
-                    <p class="text-muted mb-2 mb-md-0" id="report_list_summary">共8条记录，当前第1页</p>
-                    <nav aria-label="报告列表分页">
-                      <ul class="pagination mb-0">
-                        <li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">…</a></li>
-                        <li class="page-item"><a class="page-link" href="#">12</a></li>
-                        <li class="page-item"><a class="page-link" href="#">下一页</a></li>
-                      </ul>
-                    </nav>
+                  <p class="text-muted mb-0 mt-3" id="report_list_summary">共4条记录，当前第1页</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">标准化报告模板</p>
+                  <div class="row">
+                    <div class="col-md-3 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="mb-2">病理通用报告</h6>
+                          <p class="text-muted small mb-3">适用于常规组织病理诊断，含患者信息、镜下所见与结论。</p>
+                          <button type="button" class="btn btn-sm btn-outline-secondary mr-1">编辑</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary mr-1">预览</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary">设为默认</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="mb-2">癌种专项报告</h6>
+                          <p class="text-muted small mb-3">针对指定癌种的结构化结论与分期提示字段。</p>
+                          <button type="button" class="btn btn-sm btn-outline-secondary mr-1">编辑</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary mr-1">预览</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary">设为默认</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="mb-2">免疫组化附页</h6>
+                          <p class="text-muted small mb-3">IHC 指标表格与判读说明，可与主报告合并导出。</p>
+                          <button type="button" class="btn btn-sm btn-outline-secondary mr-1">编辑</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary mr-1">预览</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary">设为默认</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
+                          <h6 class="mb-2">科研导出简版</h6>
+                          <p class="text-muted small mb-3">脱敏字段与统计友好版式，便于课题归档与复核。</p>
+                          <button type="button" class="btn btn-sm btn-outline-secondary mr-1">编辑</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary mr-1">预览</button>
+                          <button type="button" class="btn btn-sm btn-outline-primary">设为默认</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

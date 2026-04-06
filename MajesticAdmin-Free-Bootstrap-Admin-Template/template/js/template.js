@@ -57,39 +57,49 @@
     //checkbox and radios
     $(".form-check label,.form-radio label").append('<i class="input-helper"></i>');
 
-    // Remove pro banner on close
+    // Optional pro banner — top navbar always stays fixed (fixed-top) while scrolling
+    var navbar = document.querySelector('.navbar');
+    var proBanner = document.querySelector('#proBanner');
+    var bannerClose = document.querySelector('#bannerClose');
+    var pageBody = document.querySelector('.page-body-wrapper');
 
-   
-    if ($.cookie('majestic-free-banner')!="true") {
-      document.querySelector('#proBanner').classList.add('d-flex');
-      document.querySelector('.navbar').classList.remove('fixed-top');
+    if (navbar) {
+      navbar.classList.add('fixed-top');
     }
-    else {
-      document.querySelector('#proBanner').classList.add('d-none');
-      document.querySelector('.navbar').classList.add('fixed-top');
+
+    if (proBanner) {
+      if ($.cookie('majestic-free-banner') != 'true') {
+        proBanner.classList.add('d-flex');
+      } else {
+        proBanner.classList.add('d-none');
+      }
     }
-    
-    if ($( ".navbar" ).hasClass( "fixed-top" )) {
-      document.querySelector('.page-body-wrapper').classList.remove('pt-0');
-      document.querySelector('.navbar').classList.remove('pt-5');
+
+    if (navbar && navbar.classList.contains('fixed-top')) {
+      if (pageBody) pageBody.classList.remove('pt-0');
+      navbar.classList.remove('pt-5');
+      navbar.classList.remove('mt-3');
+    } else if (navbar) {
+      if (pageBody) pageBody.classList.add('pt-0');
+      navbar.classList.add('pt-5');
+      navbar.classList.add('mt-3');
     }
-    else {
-      document.querySelector('.page-body-wrapper').classList.add('pt-0');
-      document.querySelector('.navbar').classList.add('pt-5');
-      document.querySelector('.navbar').classList.add('mt-3');
-      
+
+    if (bannerClose && proBanner) {
+      bannerClose.addEventListener('click', function() {
+        proBanner.classList.add('d-none');
+        proBanner.classList.remove('d-flex');
+        if (navbar) {
+          navbar.classList.remove('pt-5');
+          navbar.classList.add('fixed-top');
+          navbar.classList.remove('mt-3');
+        }
+        if (pageBody) pageBody.classList.add('proBanner-padding-top');
+        var date = new Date();
+        date.setTime(date.getTime() + 24 * 60 * 60 * 1000);
+        $.cookie('majestic-free-banner', 'true', { expires: date });
+      });
     }
-    document.querySelector('#bannerClose').addEventListener('click',function() {
-      document.querySelector('#proBanner').classList.add('d-none');
-      document.querySelector('#proBanner').classList.remove('d-flex');
-      document.querySelector('.navbar').classList.remove('pt-5');
-      document.querySelector('.navbar').classList.add('fixed-top');
-      document.querySelector('.page-body-wrapper').classList.add('proBanner-padding-top');
-      document.querySelector('.navbar').classList.remove('mt-3');
-      var date = new Date();
-      date.setTime(date.getTime() + 24 * 60 * 60 * 1000); 
-      $.cookie('majestic-free-banner', "true", { expires: date });
-    });
 
   });
 

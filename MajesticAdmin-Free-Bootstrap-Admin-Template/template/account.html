@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>账号与套餐管理 - PathoVoyage 病理AI辅助诊断平台</title>
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="images/favicon.png" />
+  <style>
+    /* 与报告/任务等页一致的内容区节奏；浅蓝灰背景仅作氛围，不压缩顶栏留白 */
+    .pv-account-page {
+      background: linear-gradient(180deg, #fafcff 0%, #f0f5ff 48%, #f4f7fb 100%);
+      padding-bottom: 1.5rem;
+      margin-bottom: 0;
+    }
+    .pv-account-card { border: none; border-radius: 14px; box-shadow: 0 4px 28px rgba(24, 144, 255, 0.08); overflow: hidden; height: 100%; }
+    .pv-account-card .card-body { padding: 1.5rem 1.75rem; }
+    .pv-account-card .card-title { font-size: 1.05rem; font-weight: 600; color: #1a1a2e; }
+    .pv-points-mini { border-radius: 12px; border: 1px solid rgba(24, 144, 255, 0.15); background: #fff; transition: box-shadow 0.2s; height: 100%; }
+    .pv-points-mini:hover { box-shadow: 0 6px 20px rgba(24, 144, 255, 0.12); }
+    .pv-points-mini h5 { color: #1890ff; font-weight: 700; font-size: 1.1rem; }
+    .pv-plan-row { border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 12px; padding: 1.1rem 1.35rem; background: #fff; margin-bottom: 0.75rem; }
+    .pv-plan-row:last-child { margin-bottom: 0; }
+    .pv-badge-soft-success { background: rgba(82, 196, 26, 0.12); color: #389e0d; font-weight: 600; }
+    .pv-badge-soft-warning { background: rgba(250, 173, 20, 0.15); color: #d48806; font-weight: 600; }
+    .pv-link-muted { font-size: 0.875rem; }
+    .pv-account-footer-area { background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="container-scroller">
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <a class="navbar-brand brand-logo" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-sort-variant"></span></button>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+              <img src="images/faces/face5.jpg" alt="profile"/>
+              <span class="nav-profile-name">病理医生</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a>
+              <a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button>
+      </div>
+    </nav>
+    <div class="container-fluid page-body-wrapper">
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li>
+          <li class="nav-item active"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li>
+        </ul>
+      </nav>
+      <div class="main-panel">
+        <div class="content-wrapper pv-account-page">
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <h2>账号与套餐管理</h2>
+              <p class="mb-0 text-muted">展示机构信息、积分余额、充值与订阅入口。</p>
+            </div>
+          </div>
+
+          <div class="row align-items-stretch">
+            <div class="col-lg-6 grid-margin stretch-card d-flex">
+              <div class="card pv-account-card w-100">
+                <div class="card-body d-flex flex-column">
+                  <div class="d-flex justify-content-between align-items-start mb-4">
+                    <p class="card-title mb-0">机构账号信息</p>
+                    <span class="badge pv-badge-soft-success rounded-pill px-3 py-2">正常</span>
+                  </div>
+                  <div class="border-bottom pb-3 mb-3">
+                    <p class="text-muted small mb-1">机构名称</p>
+                    <p class="mb-0 font-weight-medium text-dark">示例医院（病理科）</p>
+                  </div>
+                  <div class="border-bottom pb-3 mb-3">
+                    <p class="text-muted small mb-1">账号状态</p>
+                    <p class="mb-0 font-weight-medium text-success">正常</p>
+                  </div>
+                  <div class="mt-auto">
+                    <p class="text-muted small mb-1">密码修改功能</p>
+                    <p class="mb-0 text-muted small">已限制（本阶段不启用登录/权限）</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 grid-margin stretch-card d-flex">
+              <div class="card pv-account-card w-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start flex-wrap mb-3">
+                    <p class="card-title mb-0">套餐与积分管理</p>
+                    <span class="badge badge-primary rounded-pill px-3 py-2 font-weight-medium">剩余积分：3200</span>
+                  </div>
+                  <p class="text-muted small mb-1">当前套餐：<span class="text-dark font-weight-medium">基础版</span></p>
+                  <p class="text-muted small mb-4">有效期至：<span class="text-dark font-weight-medium">2027-03-31</span></p>
+
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="font-weight-bold text-dark mb-0">积分充值</p>
+                    <a href="#" class="pv-link-muted text-primary" onclick="return false;" title="演示">充值入口</a>
+                  </div>
+                  <div class="row mb-4">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                      <div class="pv-points-mini p-3">
+                        <h5 class="mb-2">1000 积分</h5>
+                        <p class="text-muted small mb-0">适合少量切片快速分析</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                      <div class="pv-points-mini p-3">
+                        <h5 class="mb-2">5000 积分</h5>
+                        <p class="text-muted small mb-0">适合科室短周期批量使用</p>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="pv-points-mini p-3">
+                        <h5 class="mb-2">20000 积分</h5>
+                        <p class="text-muted small mb-0">适合高频工作场景</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="font-weight-bold text-dark mb-0">订阅套餐</p>
+                    <span class="badge badge-light text-dark border rounded-pill px-2 py-1 small">年付</span>
+                  </div>
+
+                  <div class="pv-plan-row d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <div class="mb-3 mb-md-0 pr-md-3">
+                      <div class="d-flex align-items-center flex-wrap mb-1">
+                        <span class="font-weight-bold text-dark mr-2">标准版</span>
+                        <span class="badge pv-badge-soft-success rounded-pill">推荐</span>
+                      </div>
+                      <p class="text-muted small mb-0">包含：批量处理 + 报告管理 + 导出</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary px-4">购买/续费</button>
+                  </div>
+
+                  <div class="pv-plan-row d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-0">
+                    <div class="mb-3 mb-md-0 pr-md-3">
+                      <div class="d-flex align-items-center flex-wrap mb-1">
+                        <span class="font-weight-bold text-dark mr-2">旗舰版</span>
+                        <span class="badge pv-badge-soft-warning rounded-pill">可选</span>
+                      </div>
+                      <p class="text-muted small mb-0">包含：更多积分额度 + 批量打包导出</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary px-4">购买/续费</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer pv-account-footer-area">
+          <div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top">
+            <p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3">
+              <span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span>
+            </p>
+            <p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+  <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/jquery.cookie.js" type="text/javascript"></script>
+</body>
+</html>

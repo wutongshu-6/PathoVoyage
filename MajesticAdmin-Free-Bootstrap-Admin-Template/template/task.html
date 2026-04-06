@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>任务中心 - PathoVoyage 病理AI辅助诊断平台</title>
+  <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
+  <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+<body>
+  <div class="container-scroller">
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row"><div class="navbar-brand-wrapper d-flex justify-content-center"><div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100"><a class="navbar-brand brand-logo" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a><a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a><button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-sort-variant"></span></button></div></div><div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"><ul class="navbar-nav navbar-nav-right"><li class="nav-item nav-profile dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown"><img src="images/faces/face5.jpg" alt="profile"/><span class="nav-profile-name">病理医生</span></a><div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown"><a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a><a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a></div></li></ul><button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button></div></nav>
+    <div class="container-fluid page-body-wrapper">
+      <nav class="sidebar sidebar-offcanvas" id="sidebar"><ul class="nav"><li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li><li class="nav-item"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li><li class="nav-item"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li><li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li><li class="nav-item active"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li><li class="nav-item"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li></ul></nav>
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row"><div class="col-md-12 grid-margin"><h2>任务中心</h2><p class="mb-0">统一跟踪切片分析任务状态与进度。</p></div></div>
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">任务列表视图</p><div class="mb-3"><div class="d-flex justify-content-between"><span>任务 A：切片预处理</span><span>35%</span></div><div class="progress mt-1"><div class="progress-bar bg-info" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between"><span>任务 B：病灶检测</span><span>68%</span></div><div class="progress mt-1"><div class="progress-bar bg-warning" role="progressbar" style="width: 68%" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div></div></div><div class="mb-3"><div class="d-flex justify-content-between"><span>任务 C：生成诊断报告</span><span>100%</span></div><div class="progress mt-1"><div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div></div></div></div></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">卡片视图 · 待处理</p><p class="mb-2">任务编号：T-2401</p><p class="text-muted small mb-2">切片预处理 / 质控校验</p><span class="badge bg-warning text-dark">待处理</span></div></div></div>
+            <div class="col-md-4 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">卡片视图 · 进行中</p><p class="mb-2">任务编号：T-2402</p><p class="text-muted small mb-2">病灶识别 / 特征提取</p><span class="badge bg-info text-dark">进行中</span></div></div></div>
+            <div class="col-md-4 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">卡片视图 · 已完成</p><p class="mb-2">任务编号：T-2403</p><p class="text-muted small mb-2">报告生成 / 人工复核</p><span class="badge bg-success">已完成</span></div></div></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">看板视图（按阶段）</p><div class="row"><div class="col-md-3"><h6 class="mb-2">待分配</h6><ul class="list-group"><li class="list-group-item py-2">T-2410 / 切片入库</li><li class="list-group-item py-2">T-2411 / 图像清洗</li></ul></div><div class="col-md-3"><h6 class="mb-2">分析中</h6><ul class="list-group"><li class="list-group-item py-2">T-2402 / 病灶检测</li><li class="list-group-item py-2">T-2412 / 核分析</li></ul></div><div class="col-md-3"><h6 class="mb-2">待复核</h6><ul class="list-group"><li class="list-group-item py-2">T-2408 / 结果确认</li></ul></div><div class="col-md-3"><h6 class="mb-2">已归档</h6><ul class="list-group"><li class="list-group-item py-2">T-2399 / 报告归档</li><li class="list-group-item py-2">T-2403 / 报告完成</li></ul></div></div></div></div></div>
+          </div>
+        </div>
+        <footer class="footer"><div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top"><p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3"><span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span></p><p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p></div></footer>
+      </div>
+    </div>
+  </div>
+  <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="vendors/chart.js/Chart.min.js"></script>
+  <script src="vendors/datatables.net/jquery.dataTables.js"></script>
+  <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+  <script src="js/off-canvas.js"></script>
+  <script src="js/hoverable-collapse.js"></script>
+  <script src="js/template.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/data-table.js"></script>
+  <script src="js/jquery.dataTables.js"></script>
+  <script src="js/dataTables.bootstrap4.js"></script>
+  <script src="js/jquery.cookie.js" type="text/javascript"></script>
+</body>
+</html>

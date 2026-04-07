@@ -1,0 +1,141 @@
+[
+  {
+    "type": "log",
+    "delay": 500,
+    "message": "AI: 结直肠腺癌辅助诊断任务已加载，切片 CRC-001 已就绪。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 任务启动，正在执行全切片有效组织区域提取..."
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "有效组织提取",
+    "progress": 20,
+    "log_message": "AI: 有效组织区域提取完成，排除空白背景与无效区域。"
+  },
+  {
+    "type": "show_initial_heatmap",
+    "delay": 1500,
+    "image_path": "assets/images/crc_retrieval_heatmap.png",
+    "heatmap_id": "initial_heatmap",
+    "opacity": 0.5,
+    "log_message": "AI: 正在执行全局快速检索，初步定位高风险可疑区域，粗糙热力图已生成。"
+  },
+  {
+    "type": "step_update",
+    "delay": 2000,
+    "step": "全局特征提取",
+    "progress": 40,
+    "log_message": "AI: 全局特征提取完成，初步识别多处高可疑病灶区域，按风险等级排序。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 思考: 初步检索发现腺体结构紊乱最显著的高风险区域，我将首先对该区域进行高倍镜观察。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1000,
+    "patch_id": "1_22528_40960.jpeg",
+    "coordinates": {"top": "37.5%", "left": "22%"},
+    "log_message": "AI 动作: 导航至最高风险区域 1_22528_40960，进行高倍镜聚焦观察。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "1_22528_40960.jpeg",
+    "patch_image_path": "assets/images/crc_patches/1_22528_40960.jpeg",
+    "log_message": "AI 观察: 镜下可见中分化腺癌病灶，腺体不规则融合，细胞异型性明显，核分裂象易见。"
+  },
+  {
+    "type": "log",
+    "delay": 2500,
+    "message": "AI 思考: 已确认核心恶性病灶，接下来将对次高风险区域进行观察，评估肿瘤浸润范围。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1500,
+    "patch_id": "2_28672_49152.jpeg",
+    "coordinates": {"top": "45%", "left": "28%"},
+    "log_message": "AI 动作: 导航至次高风险区域 2_28672_49152，观察肿瘤浸润情况。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "2_28672_49152.jpeg",
+    "patch_image_path": "assets/images/crc_patches/2_28672_49152.jpeg",
+    "log_message": "AI 观察: 镜下可见腺体拥挤呈“背靠背”排列，符合腺癌形态学特征，支持恶性诊断。"
+  },
+  {
+    "type": "log",
+    "delay": 2500,
+    "message": "AI 思考: 已确认肿瘤浸润范围，接下来对其余可疑区域进行排查，评估浸润深度。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1500,
+    "patch_id": "3_18432_36864.jpeg",
+    "coordinates": {"top": "34%", "left": "18%"},
+    "log_message": "AI 动作: 导航至区域 3_18432_36864，评估浸润深度。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "3_18432_36864.jpeg",
+    "patch_image_path": "assets/images/crc_patches/3_18432_36864.jpeg",
+    "log_message": "AI 观察: 镜下可见肿瘤细胞浸润至固有肌层，符合浸润性腺癌诊断标准。"
+  },
+  {
+    "type": "step_update",
+    "delay": 2000,
+    "step": "可疑区域定位",
+    "progress": 60,
+    "log_message": "AI: 全片可疑区域排查完成，已锁定核心恶性病灶并完成深度评估。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 思考: 已完成全片多尺度观察，正在基于病灶特征进行综合诊断，生成最终诊断热力图。"
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "热力值计算",
+    "progress": 80,
+    "log_message": "AI: 病灶热力值计算完成，基于恶性风险等级完成区域分级。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 正在执行热力图图层渲染与对齐..."
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "图层渲染对齐",
+    "progress": 100,
+    "log_message": "AI: 热力图图层渲染完成。"
+  },
+  {
+    "type": "show_final_heatmap",
+    "delay": 2000,
+    "initial_heatmap_id": "initial_heatmap",
+    "final_heatmap_path": "assets/images/crc_final_heatmap.png",
+    "heatmap_id": "final_heatmap",
+    "opacity": 0.6,
+    "log_message": "AI: 粗糙热力图已替换为最终精细诊断热力图，精准标记不同风险等级病灶区域。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 最终诊断结论: 综合全片多尺度观察结果，镜下可见异型腺体呈浸润性生长，符合结直肠中分化腺癌形态学特征。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 分析流程全部完成，可点击「生成报告」查看完整诊断报告。"
+  }
+]

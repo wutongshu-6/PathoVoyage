@@ -1,0 +1,141 @@
+[
+  {
+    "type": "log",
+    "delay": 500,
+    "message": "AI: 鼻咽非角化性癌辅助诊断任务已加载，切片117176已就绪。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 任务启动，正在执行全切片有效组织区域提取..."
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "有效组织提取",
+    "progress": 20,
+    "log_message": "AI: 有效组织区域提取完成，排除空白背景与无效区域。"
+  },
+  {
+    "type": "show_initial_heatmap",
+    "delay": 1500,
+    "image_path": "assets/images/117176_retrieval_heatmap.png",
+    "heatmap_id": "initial_heatmap",
+    "opacity": 0.5,
+    "log_message": "AI: 正在执行全局快速检索，初步定位高风险可疑区域，粗糙热力图已生成。"
+  },
+  {
+    "type": "step_update",
+    "delay": 2000,
+    "step": "全局特征提取",
+    "progress": 40,
+    "log_message": "AI: 全局特征提取完成，初步识别6处高可疑病灶区域，按风险等级排序。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 思考: 初步检索发现细胞异型性最显著的高风险区域，我将首先对该区域进行高倍镜观察。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1000,
+    "patch_id": "1_43297_12992.jpg",
+    "coordinates": {"top": "12%", "left": "43%"},
+    "log_message": "AI 动作: 导航至最高风险区域 1_43297_12992，进行高倍镜聚焦观察。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "1_43297_12992.jpg",
+    "patch_image_path": "assets/images/patches/1_43297_12992.jpg",
+    "log_message": "AI 观察: 镜下可见肿瘤组织边界不规则，细胞呈明显异型性，核大深染，伴出血及淋巴细胞浸润，符合恶性肿瘤形态学特征。"
+  },
+  {
+    "type": "log",
+    "delay": 2500,
+    "message": "AI 思考: 已确认核心恶性病灶，接下来将对次高风险区域进行观察，评估肿瘤浸润范围。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1500,
+    "patch_id": "2_59681_17088.jpg",
+    "coordinates": {"top": "17%", "left": "59%"},
+    "log_message": "AI 动作: 导航至次高风险区域 2_59681_17088，观察肿瘤浸润情况。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "2_59681_17088.jpg",
+    "patch_image_path": "assets/images/patches/2_59681_17088.jpg",
+    "log_message": "AI 观察: 镜下可见大量炎症细胞浸润，伴局部出血，肿瘤细胞呈浸润性生长，破坏周围正常组织结构。"
+  },
+  {
+    "type": "log",
+    "delay": 2500,
+    "message": "AI 思考: 已确认肿瘤浸润范围，接下来对其余可疑区域进行排查，排除多灶性病变。"
+  },
+  {
+    "type": "highlight_patch",
+    "delay": 1500,
+    "patch_id": "3_67873_4800.jpg",
+    "coordinates": {"top": "4%", "left": "67%"},
+    "log_message": "AI 动作: 导航至区域 3_67873_4800，排查可疑病变。"
+  },
+  {
+    "type": "show_patch_modal",
+    "delay": 1500,
+    "patch_id": "3_67873_4800.jpg",
+    "patch_image_path": "assets/images/patches/3_67873_4800.jpg",
+    "log_message": "AI 观察: 镜下可见组织形态规则，细胞形态均一，未见明显异型性，为正常黏膜组织，排除恶性病变。"
+  },
+  {
+    "type": "step_update",
+    "delay": 2000,
+    "step": "可疑区域定位",
+    "progress": 60,
+    "log_message": "AI: 全片可疑区域排查完成，已锁定2处核心恶性病灶，排除其余良性区域。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 思考: 已完成全片多尺度观察，正在基于病灶特征进行综合诊断，生成最终诊断热力图。"
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "热力值计算",
+    "progress": 80,
+    "log_message": "AI: 病灶热力值计算完成，基于恶性风险等级完成区域分级。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 正在执行热力图图层渲染与对齐..."
+  },
+  {
+    "type": "step_update",
+    "delay": 1500,
+    "step": "图层渲染对齐",
+    "progress": 100,
+    "log_message": "AI: 热力图图层渲染完成。"
+  },
+  {
+    "type": "show_final_heatmap",
+    "delay": 2000,
+    "initial_heatmap_id": "initial_heatmap",
+    "final_heatmap_path": "assets/images/117176_final_heatmap.png",
+    "heatmap_id": "final_heatmap",
+    "opacity": 0.6,
+    "log_message": "AI: 粗糙热力图已替换为最终精细诊断热力图，精准标记不同风险等级病灶区域。"
+  },
+  {
+    "type": "log",
+    "delay": 1500,
+    "message": "AI 最终诊断结论: 综合全片多尺度观察结果，镜下可见异型肿瘤细胞呈浸润性生长，伴出血、炎症浸润，符合鼻咽非角化性癌形态学特征。"
+  },
+  {
+    "type": "log",
+    "delay": 1000,
+    "message": "AI: 分析流程全部完成，可点击「生成报告」查看完整诊断报告。"
+  }
+]

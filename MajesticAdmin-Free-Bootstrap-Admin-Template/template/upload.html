@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>切片上传 - PathoVoyage 病理AI辅助诊断平台</title>
+  <title>切片上传与分析启动 - PathoVoyage 病理AI辅助诊断平台</title>
   <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="shortcut icon" href="images/favicon.png" />
-  <style>#upload_progress_bar { transition: width 0.08s linear; } #upload_actions{display:none;}</style>
+  <style>#case_progress_bar,#upload_progress_bar{transition:width .08s linear}</style>
 </head>
 <body>
   <div class="container-scroller">
@@ -22,18 +22,133 @@
         </div>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-        <ul class="navbar-nav navbar-nav-right"><li class="nav-item nav-profile dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown"><img src="images/faces/face5.jpg" alt="profile"/><span class="nav-profile-name">病理医生</span></a><div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown"><a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a><a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a></div></li></ul>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+              <img src="images/faces/face5.jpg" alt="profile"/>
+              <span class="nav-profile-name">病理医生</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a>
+              <a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a>
+            </div>
+          </li>
+        </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button>
       </div>
     </nav>
     <div class="container-fluid page-body-wrapper">
-      <nav class="sidebar sidebar-offcanvas" id="sidebar"><ul class="nav"><li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li><li class="nav-item"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li><li class="nav-item"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li><li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li><li class="nav-item"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li><li class="nav-item"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li></ul></nav>
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li>
+          <li class="nav-item active"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li>
+        </ul>
+      </nav>
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="row"><div class="col-md-12 grid-margin"><h2>切片上传</h2><p class="mb-0">上传数字病理切片文件，系统将校验格式并完成入库登记。</p></div></div>
-          <div class="row"><div class="col-md-12 grid-margin stretch-card"><div class="card"><div class="card-body"><p class="card-title">文件上传</p><p class="text-muted small mb-3">支持格式：TIFF/TIF、SVS、NDPI、MRXS、SCN、BIF、JP2，以及 JPG、PNG 等常见图像格式（具体以系统策略为准）。</p><div class="form-group"><label>选择切片文件</label><input id="slice_file_input" type="file" class="form-control" accept=".tif,.tiff,.svs,.ndpi,.mrxs,.scn,.bif,.jp2,.jpg,.jpeg,.png" /></div><button type="button" id="upload_submit_btn" class="btn btn-primary mt-2">上传</button><div class="mt-4"><p class="mb-2">上传进度</p><div class="progress"><div id="upload_progress_bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div></div><p id="upload_status_text" class="small text-muted mt-2 mb-0">等待上传</p></div><div id="upload_actions" class="mt-3"><button type="button" id="upload_again_btn" class="btn btn-outline-primary btn-sm me-2">继续上传</button><a href="analysis.html" class="btn btn-primary btn-sm">前往分析页面</a></div></div></div></div></div>
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <h2>切片上传与分析启动</h2>
+              <p class="mb-0">上传数字病理全切片，或选择标准病例，启动AI辅助诊断分析</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">标准测试病例库</p>
+                  <p class="text-muted small mb-4">平台内置标准化预处理病例，用于功能验证与操作学习，可直接启动AI全流程分析</p>
+                  <div class="row">
+                    <div class="col-md-6 grid-margin stretch-card">
+                      <div class="card border border-primary" id="case_card_npc" style="cursor:pointer;">
+                        <div class="card-body d-flex align-items-center">
+                          <div class="d-flex align-items-center pr-3 flex-shrink-0">
+                            <input type="radio" class="form-check-input position-static m-0" name="select_case" id="case_npc" value="npc" checked>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="d-block font-weight-medium text-dark">鼻咽癌标准测试病例</span>
+                            <span class="d-block text-muted small mt-2">117176号鼻咽非角化性癌全切片，平台已完成标准化预处理，支持全流程可解释性分析</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 grid-margin stretch-card">
+                      <div class="card border" id="case_card_crc" style="cursor:pointer;">
+                        <div class="card-body d-flex align-items-center">
+                          <div class="d-flex align-items-center pr-3 flex-shrink-0">
+                            <input type="radio" class="form-check-input position-static m-0" name="select_case" id="case_crc" value="crc">
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="d-block font-weight-medium text-dark">结直肠癌标准测试病例</span>
+                            <span class="d-block text-muted small mt-2">结直肠腺癌标准全切片，平台已完成标准化预处理，支持全流程可解释性分析</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center mt-2">
+                    <button type="button" class="btn btn-primary" id="case_launch_btn">启动AI分析</button>
+                  </div>
+                  <div id="case_launch_wrap" class="mt-4 d-none">
+                    <p class="mb-2 small text-muted" id="case_status_text">病例数据加载中...</p>
+                    <div class="progress">
+                      <div id="case_progress_bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">本地病理切片上传</p>
+                  <p class="text-muted small mb-4">支持主流数字病理全切片格式，上传后自动完成预处理与分析启动</p>
+                  <form class="forms-sample" id="local_upload_form" onsubmit="return false;">
+                    <div class="form-group">
+                      <label>切片病理编号</label>
+                      <input type="text" class="form-control" id="slide_id_input" placeholder="请输入切片病理编号（选填）" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                      <label>选择切片文件</label>
+                      <input id="slice_file_input" type="file" class="form-control" multiple accept=".svs,.ndpi,.tif,.tiff,.jpg,.jpeg,.png">
+                      <small class="form-text text-muted">支持格式：SVS、NDPI、TIFF、JPG、PNG</small>
+                    </div>
+                    <button type="button" id="upload_submit_btn" class="btn btn-outline-primary">开始上传</button>
+                  </form>
+                  <div class="mt-4">
+                    <p class="mb-2">上传进度</p>
+                    <div class="progress">
+                      <div id="upload_progress_bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <p id="upload_status_text" class="small text-muted mt-2 mb-0">等待上传</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <p class="text-center text-muted small mb-0 px-md-5">本平台AI分析结果仅为辅助诊断参考，最终诊断需由执业病理医生人工复核确认。</p>
+            </div>
+          </div>
         </div>
-        <footer class="footer"><div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top"><p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3"><span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span></p><p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p></div></footer>
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top">
+            <p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3">
+              <span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span>
+            </p>
+            <p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p>
+          </div>
+        </footer>
       </div>
     </div>
   </div>
@@ -51,61 +166,166 @@
   <script src="js/jquery.cookie.js" type="text/javascript"></script>
   <script>
     (function () {
-      var bar = document.getElementById("upload_progress_bar");
-      var btn = document.getElementById("upload_submit_btn");
-      var input = document.getElementById("slice_file_input");
-      var animTimer = null;
-      var statusText = document.getElementById("upload_status_text");
-      var actions = document.getElementById("upload_actions");
-      var uploadAgainBtn = document.getElementById("upload_again_btn");
-      function setProgress(pct) {
+      'use strict';
+
+      function setBar(bar, pct) {
         pct = Math.max(0, Math.min(100, pct));
-        bar.style.width = pct + "%";
-        bar.setAttribute("aria-valuenow", String(pct));
-        bar.textContent = Math.round(pct) + "%";
+        bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+        bar.textContent = Math.round(pct) + '%';
       }
-      function stopBarAnimation() {
-        bar.classList.remove("progress-bar-animated");
+
+      /* 标准病例库：单选 + 卡片高亮 + 启动跳转 */
+      var caseBtn = document.getElementById('case_launch_btn');
+      var caseWrap = document.getElementById('case_launch_wrap');
+      var caseBar = document.getElementById('case_progress_bar');
+      var caseStatus = document.getElementById('case_status_text');
+      var caseAnim = null;
+      var radioNpc = document.getElementById('case_npc');
+      var radioCrc = document.getElementById('case_crc');
+      var cardNpc = document.getElementById('case_card_npc');
+      var cardCrc = document.getElementById('case_card_crc');
+
+      function syncCaseCardHighlight() {
+        if (!cardNpc || !cardCrc) return;
+        cardNpc.classList.toggle('border-primary', radioNpc && radioNpc.checked);
+        cardCrc.classList.toggle('border-primary', radioCrc && radioCrc.checked);
       }
-      function startBarAnimation() {
-        bar.classList.add("progress-bar-animated");
+
+      if (radioNpc) radioNpc.addEventListener('change', syncCaseCardHighlight);
+      if (radioCrc) radioCrc.addEventListener('change', syncCaseCardHighlight);
+
+      function onCaseCardClick(cardEl, radioEl, ev) {
+        if (ev.target && ev.target.tagName === 'INPUT' && ev.target.name === 'select_case') return;
+        radioEl.checked = true;
+        syncCaseCardHighlight();
       }
-      function runUploadProgress() {
-        if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-        actions.style.display = "none";
-        statusText.textContent = "上传中...";
-        startBarAnimation();
-        var start = performance.now();
-        var duration = 2600;
-        function frame(now) {
-          var t = (now - start) / duration;
-          if (t >= 1) {
-            setProgress(100);
-            animTimer = null;
-            stopBarAnimation();
-            statusText.textContent = "上传完成";
-            actions.style.display = "block";
-            return;
-          }
-          setProgress(t * 100);
-          animTimer = requestAnimationFrame(frame);
-        }
-        animTimer = requestAnimationFrame(frame);
+
+      if (cardNpc && radioNpc) {
+        cardNpc.addEventListener('click', function (e) { onCaseCardClick(cardNpc, radioNpc, e); });
       }
-      btn.addEventListener("click", function () {
-        if (!input.files || !input.files.length) {
-          alert("请先选择要上传的切片文件。");
+      if (cardCrc && radioCrc) {
+        cardCrc.addEventListener('click', function (e) { onCaseCardClick(cardCrc, radioCrc, e); });
+      }
+
+      syncCaseCardHighlight();
+
+      caseBtn.addEventListener('click', function () {
+        var sel = document.querySelector('input[name="select_case"]:checked');
+        if (!sel) {
+          window.alert('请先选择一个病例');
           return;
         }
-        setProgress(0);
-        runUploadProgress();
+        var caseId = sel.value;
+        if (caseAnim) cancelAnimationFrame(caseAnim);
+        caseWrap.classList.remove('d-none');
+        caseStatus.textContent = '病例数据加载中...';
+        caseBtn.disabled = true;
+        caseBar.classList.add('progress-bar-animated');
+        var t0 = performance.now();
+        var duration = 2000;
+        function frame(now) {
+          var p = Math.min(100, ((now - t0) / duration) * 100);
+          setBar(caseBar, p);
+          if (p >= 100) {
+            caseAnim = null;
+            caseBar.classList.remove('progress-bar-animated');
+            window.location.href = 'analysis.html?case_id=' + encodeURIComponent(caseId);
+            return;
+          }
+          caseAnim = requestAnimationFrame(frame);
+        }
+        setBar(caseBar, 0);
+        caseAnim = requestAnimationFrame(frame);
       });
-      uploadAgainBtn.addEventListener("click", function () {
-        input.value = "";
-        setProgress(0);
-        statusText.textContent = "等待上传";
-        actions.style.display = "none";
-        startBarAnimation();
+
+      /* 本地上传：按已选文件字节读取进度，完成后跳转（接入后端时可改为 XMLHttpRequest.upload） */
+      var uploadBar = document.getElementById('upload_progress_bar');
+      var uploadBtn = document.getElementById('upload_submit_btn');
+      var fileInput = document.getElementById('slice_file_input');
+      var uploadStatus = document.getElementById('upload_status_text');
+      var slideIdInput = document.getElementById('slide_id_input');
+      var CHUNK = 512 * 1024;
+
+      function readFilesWithProgress(files, onProgress, onComplete, onError) {
+        var total = 0;
+        for (var i = 0; i < files.length; i++) total += files[i].size;
+        if (!total) {
+          onError(new Error('empty'));
+          return;
+        }
+        var loaded = 0;
+        var fileIdx = 0;
+
+        function readSlice(file, offset, cb) {
+          if (offset >= file.size) {
+            cb();
+            return;
+          }
+          var end = Math.min(offset + CHUNK, file.size);
+          var blob = file.slice(offset, end);
+          var fr = new FileReader();
+          fr.onerror = function () { onError(fr.error || new Error('read')); };
+          fr.onload = function () {
+            loaded += end - offset;
+            onProgress(loaded / total * 100);
+            readSlice(file, end, cb);
+          };
+          fr.readAsArrayBuffer(blob);
+        }
+
+        function nextFile() {
+          if (fileIdx >= files.length) {
+            onComplete();
+            return;
+          }
+          readSlice(files[fileIdx], 0, function () {
+            fileIdx++;
+            nextFile();
+          });
+        }
+        nextFile();
+      }
+
+      uploadBtn.addEventListener('click', function () {
+        var files = fileInput.files;
+        if (!files || !files.length) {
+          alert('请选择需要上传的切片文件。');
+          return;
+        }
+        var totalBytes = 0;
+        for (var fi = 0; fi < files.length; fi++) totalBytes += files[fi].size;
+        if (!totalBytes) {
+          alert('所选文件无效或总大小为 0，请重新选择。');
+          return;
+        }
+        uploadBtn.disabled = true;
+        uploadBar.classList.add('progress-bar-animated');
+        uploadStatus.textContent = '上传中...';
+        setBar(uploadBar, 0);
+        var slideNo = (slideIdInput && slideIdInput.value) ? slideIdInput.value.trim() : '';
+        try {
+          if (slideNo) sessionStorage.setItem('pv_upload_slide_id', slideNo);
+          else sessionStorage.removeItem('pv_upload_slide_id');
+        } catch (e) {}
+
+        readFilesWithProgress(
+          files,
+          function (pct) { setBar(uploadBar, pct); },
+          function () {
+            uploadBar.classList.remove('progress-bar-animated');
+            setBar(uploadBar, 100);
+            uploadStatus.textContent = '上传完成';
+            uploadBtn.disabled = false;
+            window.location.href = 'analysis.html?case_id=custom';
+          },
+          function () {
+            uploadBar.classList.remove('progress-bar-animated');
+            uploadStatus.textContent = '读取失败，请重试';
+            uploadBtn.disabled = false;
+            alert('文件读取失败，请检查文件是否可访问后重试。');
+          }
+        );
       });
     })();
   </script>

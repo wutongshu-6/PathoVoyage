@@ -19,60 +19,201 @@
       margin-bottom: 0.5rem;
     }
     .analysis-page-hero h2 { color: #0f172a; font-weight: 700; letter-spacing: -0.02em; }
-    .analysis-page-hero .hero-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--pv-blue); background: #fff; border: 1px solid rgba(22, 93, 255, 0.25); border-radius: 999px; padding: 4px 12px; margin-bottom: 0.75rem; }
     .analysis-card-accent { border-left: 4px solid var(--pv-blue); box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06); }
     .analysis-viewer-wrap { border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(22, 93, 255, 0.12); }
     .analysis-side-card .progress { height: 8px; border-radius: 4px; }
-    .analysis-log-highlight { color: #d93025; font-weight: 700; }
     .analysis-subtitle { font-size: 12px; color: #6c757d; margin-bottom: 6px; }
-    #log_container { background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important; border-color: #e2e8f0 !important; }
-    .analysis-complete-overlay {
-      position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center;
-      background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(5px);
+    #analysis_progress { transition: width 0.2s ease; background-color: #165DFF; border-color: #165DFF; }
+    #ai_log_container {
+      background: #e8f4fc !important;
+      border: 1px solid #cfe8f8 !important;
     }
-    .analysis-complete-overlay.show { display: flex; animation: pvOverlayIn 0.45s ease forwards; }
-    @keyframes pvOverlayIn { from { opacity: 0; } to { opacity: 1; } }
-    .analysis-complete-card {
-      background: #fff; border-radius: 16px; padding: 2rem 2.25rem; max-width: 380px; text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(22, 93, 255, 0.28);
-      animation: pvCardPop 0.6s cubic-bezier(0.34, 1.35, 0.64, 1) forwards;
+    .pv-highlight-box {
+      position: absolute;
+      box-sizing: border-box;
+      margin-left: 0;
+      margin-top: 0;
+      transform: translate(-50%, -50%);
+      border: 2px solid #ff4d4f;
+      border-radius: 2px;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 0 12px rgba(255, 77, 79, 0.55);
+      pointer-events: none;
+      z-index: 6;
+      animation: pvHighlightPulse 1.15s ease-in-out infinite;
     }
-    @keyframes pvCardPop { from { opacity: 0; transform: scale(0.88) translateY(24px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-    .analysis-complete-icon { font-size: 3.5rem; color: var(--pv-blue); line-height: 1; margin-bottom: 0.5rem; animation: pvIconBounce 0.75s ease 0.15s both; }
-    @keyframes pvIconBounce { 0% { transform: scale(0); opacity: 0; } 55% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
-    .analysis-complete-shine { position: absolute; inset: -50%; background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.5) 50%, transparent 60%); animation: pvShine 1.2s ease 0.3s forwards; pointer-events: none; }
-    @keyframes pvShine { from { transform: translateX(-100%) rotate(12deg); } to { transform: translateX(100%) rotate(12deg); } }
+    @keyframes pvHighlightPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 0 8px rgba(255, 77, 79, 0.45); }
+      50% { opacity: 0.88; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.95), 0 0 16px rgba(255, 77, 79, 0.75); }
+    }
+    .pv-log-conclusion { color: #d93025; font-weight: 700; }
+    .pv-heatmap-layer {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #slice_stack { max-width: 100%; max-height: 520px; }
   </style>
 </head>
 <body>
-  <div id="analysis_complete_overlay" class="analysis-complete-overlay" aria-hidden="true">
-    <div class="analysis-complete-card position-relative overflow-hidden">
-      <div class="analysis-complete-shine"></div>
-      <div class="analysis-complete-icon"><i class="mdi mdi-check-decagram"></i></div>
-      <h4 class="mb-2 fw-bold text-dark">智能分析已完成</h4>
-      <p class="text-muted small mb-3">多尺度阅片与热力图叠加已结束，可进行复核或查看结构化报告。</p>
+  <div class="modal fade" id="patch_modal" tabindex="-1" aria-labelledby="patch_modal_title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="patch_modal_title">病灶高倍观察</h5>
+          <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <img id="patch_modal_img" class="img-fluid d-block mx-auto mb-3" alt="病灶 Patch" />
+          <p id="patch_modal_text" class="small text-muted mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="analysis_complete_overlay" class="analysis-complete-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.55);">
+    <div class="card p-4 text-center" style="max-width:380px;">
+      <div class="mb-2 text-primary"><i class="mdi mdi-check-decagram" style="font-size:3rem;"></i></div>
+      <h5 class="mb-2">智能分析已完成</h5>
+      <p class="text-muted small mb-3">多尺度阅片与热力图叠加已结束，可进行复核或生成报告。</p>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <a href="report.html" class="btn btn-primary btn-sm">前往报告管理</a>
         <button type="button" class="btn btn-outline-secondary btn-sm" id="analysis_complete_dismiss">关闭</button>
       </div>
     </div>
   </div>
+
   <div class="container-scroller">
-    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row"><div class="navbar-brand-wrapper d-flex justify-content-center"><div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100"><a class="navbar-brand brand-logo" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a><a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a><button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-sort-variant"></span></button></div></div><div class="navbar-menu-wrapper d-flex align-items-center justify-content-end"><ul class="navbar-nav navbar-nav-right"><li class="nav-item nav-profile dropdown"><a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown"><img src="images/faces/face5.jpg" alt="profile"/><span class="nav-profile-name">病理医生</span></a><div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown"><a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a><a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a></div></li></ul><button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button></div></nav>
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <a class="navbar-brand brand-logo" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-sort-variant"></span></button>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+              <img src="images/faces/face5.jpg" alt="profile"/>
+              <span class="nav-profile-name">病理医生</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item"><i class="mdi mdi-settings text-primary"></i>设置</a>
+              <a class="dropdown-item" href="login.html"><i class="mdi mdi-logout text-primary"></i>退出登录</a>
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button>
+      </div>
+    </nav>
     <div class="container-fluid page-body-wrapper">
-      <nav class="sidebar sidebar-offcanvas" id="sidebar"><ul class="nav"><li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li><li class="nav-item"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li><li class="nav-item"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li><li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li><li class="nav-item"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li><li class="nav-item"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li></ul></nav>
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="mdi mdi-home menu-icon"></i><span class="menu-title">首页</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="upload.html"><i class="mdi mdi-view-headline menu-icon"></i><span class="menu-title">切片上传</span></a></li>
+          <li class="nav-item active"><a class="nav-link" href="analysis.html"><i class="mdi mdi-chart-pie menu-icon"></i><span class="menu-title">智能分析</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="report.html"><i class="mdi mdi-file-document-box-outline menu-icon"></i><span class="menu-title">报告管理</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="task.html"><i class="mdi mdi-account menu-icon"></i><span class="menu-title">任务中心</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="account.html"><i class="mdi mdi-account-card-details-outline menu-icon"></i><span class="menu-title">账号与套餐</span></a></li>
+        </ul>
+      </nav>
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="row"><div class="col-md-12 grid-margin"><div class="analysis-page-hero"><span class="hero-badge"><i class="mdi mdi-brain"></i> 过程可视化 · 可解释诊断</span><h2 class="mb-2">智能分析</h2><p class="mb-0 text-muted">多尺度阅片与热力图分析过程可视化；切片载入与缩放操作按业务配置接入。</p></div></div></div>
           <div class="row">
-            <div class="col-md-8 grid-margin stretch-card"><div class="card analysis-card-accent"><div class="card-body"><p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-microscope text-primary"></i> 病理切片视图</p><div id="slice_viewer" class="analysis-viewer-wrap border-0 d-flex align-items-center justify-content-center" style="height: 520px;">切片显示区域</div><div id="analysis_supplement_text" class="mt-3 small text-muted" style="min-height:1.5em;"></div></div></div></div>
-            <div class="col-md-4 grid-margin stretch-card"><div class="card analysis-card-accent analysis-side-card"><div class="card-body"><p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-chart-timeline-variant text-primary"></i> 分析状态</p><div class="mb-3"><button id="start_btn" class="btn btn-primary btn-sm me-2">开始分析</button><button id="pause_btn" class="btn btn-outline-secondary btn-sm me-2">暂停</button><button id="resume_btn" class="btn btn-outline-primary btn-sm">继续</button></div><p class="mb-2 small text-muted">AI多尺度分析总进度</p><div class="progress mb-3"><div id="analysis_progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%; background-color:#165DFF; border-color:#165DFF;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div></div><p id="current_step" class="mb-3 small">当前步骤：等待开始</p><p class="mb-1 fw-semibold text-dark">热力图生成流程</p><div class="analysis-subtitle">有效组织提取</div><div class="progress mb-2"><div id="heatmap_step_1" class="progress-bar" style="width: 0%; background-color:#165DFF;">0%</div></div><div class="analysis-subtitle">全局特征提取</div><div class="progress mb-2"><div id="heatmap_step_2" class="progress-bar" style="width: 0%; background-color:#165DFF;">0%</div></div><div class="analysis-subtitle">热力值计算</div><div class="progress mb-2"><div id="heatmap_step_3" class="progress-bar" style="width: 0%; background-color:#165DFF;">0%</div></div><div class="analysis-subtitle">图层渲染对齐</div><div class="progress mb-2"><div id="heatmap_step_4" class="progress-bar" style="width: 0%; background-color:#165DFF;">0%</div></div><p id="heatmap_status" class="mb-3 text-muted small">热力图状态：等待生成</p><label class="mb-1 small">热力图透明度调节</label><input id="heatmap_opacity" type="range" class="form-range mb-3" min="0" max="100" value="35" disabled><p class="mb-2 small fw-semibold text-dark">AI诊断思考日志</p><div id="log_container" class="border rounded p-2" style="height: 220px; overflow-y: auto;">暂无日志输出</div></div></div></div>
+            <div class="col-md-12 grid-margin">
+              <div class="analysis-page-hero">
+                <h2 class="mb-2">智能分析</h2>
+                <p class="mb-0 text-muted" id="case_subtitle">当前病例：加载中…</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="pv_file_protocol_banner" class="d-none alert alert-warning mb-3 py-2 px-3" role="alert">
+            <strong>访问方式提示：</strong>当前为 <code>file://</code> 本地文件打开，浏览器通常会拦截 JSON 数据加载，导致病例配置无法读取。
+            请在 <code>template</code> 目录启动本地 HTTP 服务（例如 <code>python -m http.server 8080</code>），然后访问
+            <code>http://localhost:8080/analysis.html?case_id=npc</code>（端口以实际为准）。
+          </div>
+
+          <div class="row">
+            <div class="col-md-8 grid-margin stretch-card">
+              <div class="card analysis-card-accent">
+                <div class="card-body">
+                  <p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-microscope text-primary"></i> 病理切片视图</p>
+                  <div id="slice_viewer" class="analysis-viewer-wrap d-flex align-items-center justify-content-center position-relative" style="min-height: 520px; background: #111;">
+                    <div id="slice_stack" class="position-relative d-inline-block mx-auto">
+                      <img id="slice_base_image" alt="全景切片" class="d-block" style="max-width: 100%; max-height: 520px; width: auto; height: auto; object-fit: contain; visibility: hidden;" />
+                      <div id="heatmap_overlay_root" class="position-absolute top-0 left-0 w-100 h-100" style="pointer-events: none;"></div>
+                      <div id="patch_marker_layer" class="position-absolute top-0 left-0 w-100 h-100" style="pointer-events: none;"></div>
+                    </div>
+                  </div>
+                  <p id="analysis_supplement_text" class="mt-3 small text-muted mb-0" style="min-height: 1.5em;"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 grid-margin stretch-card">
+              <div class="card analysis-card-accent analysis-side-card">
+                <div class="card-body">
+                  <p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-chart-timeline-variant text-primary"></i> 分析状态</p>
+                  <div class="mb-3 d-flex flex-wrap gap-1">
+                    <button type="button" id="start_btn" class="btn btn-primary btn-sm">开始分析</button>
+                    <button type="button" id="pause_btn" class="btn btn-outline-secondary btn-sm">暂停</button>
+                    <button type="button" id="resume_btn" class="btn btn-outline-primary btn-sm">继续</button>
+                    <button type="button" id="restart_btn" class="btn btn-outline-secondary btn-sm">重新分析</button>
+                    <button type="button" id="report_btn" class="btn btn-outline-primary btn-sm">生成报告</button>
+                  </div>
+                  <p class="mb-2 small text-muted">AI多尺度分析总进度</p>
+                  <div class="progress mb-3">
+                    <div id="analysis_progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; background-color:#165DFF; border-color:#165DFF;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                  </div>
+                  <p id="current_step" class="mb-3 small">当前步骤：等待分析启动</p>
+
+                  <p class="mb-1 fw-semibold text-dark">热力图生成流程</p>
+                  <div class="d-flex justify-content-between align-items-center mb-1"><span class="analysis-subtitle mb-0">有效组织提取</span><span id="flow_status_1" class="badge badge-secondary">待开始</span></div>
+                  <div class="progress mb-2"><div id="heatmap_step_1" class="progress-bar bg-primary" style="width: 0%;">0%</div></div>
+                  <div class="d-flex justify-content-between align-items-center mb-1"><span class="analysis-subtitle mb-0">全局特征提取</span><span id="flow_status_2" class="badge badge-secondary">待开始</span></div>
+                  <div class="progress mb-2"><div id="heatmap_step_2" class="progress-bar bg-primary" style="width: 0%;">0%</div></div>
+                  <div class="d-flex justify-content-between align-items-center mb-1"><span class="analysis-subtitle mb-0">可疑区域定位</span><span id="flow_status_3" class="badge badge-secondary">待开始</span></div>
+                  <div class="progress mb-2"><div id="heatmap_step_3" class="progress-bar bg-primary" style="width: 0%;">0%</div></div>
+                  <div class="d-flex justify-content-between align-items-center mb-1"><span class="analysis-subtitle mb-0">热力值计算</span><span id="flow_status_4" class="badge badge-secondary">待开始</span></div>
+                  <div class="progress mb-2"><div id="heatmap_step_4" class="progress-bar bg-primary" style="width: 0%;">0%</div></div>
+                  <div class="d-flex justify-content-between align-items-center mb-1"><span class="analysis-subtitle mb-0">图层渲染对齐</span><span id="flow_status_5" class="badge badge-secondary">待开始</span></div>
+                  <div class="progress mb-3"><div id="heatmap_step_5" class="progress-bar bg-primary" style="width: 0%;">0%</div></div>
+
+                  <label class="mb-1 small" for="heatmap_opacity">热力图透明度调节</label>
+                  <input id="heatmap_opacity" type="range" class="form-range mb-3" min="0" max="100" value="50" disabled>
+
+                  <p class="mb-2 small fw-semibold text-dark">AI诊断思考日志</p>
+                  <div id="ai_log_container" class="rounded p-2" style="height: 220px; overflow-y: auto;">
+                    <p class="small text-muted mb-0">等待分析启动...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 grid-margin">
+              <p class="text-center text-muted small mb-0 px-md-5">本平台AI分析结果仅为辅助诊断参考，最终诊断需由执业病理医生人工复核确认。</p>
+            </div>
           </div>
         </div>
-        <footer class="footer"><div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top"><p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3"><span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span></p><p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p></div></footer>
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top">
+            <p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3">
+              <span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span>
+            </p>
+            <p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p>
+          </div>
+        </footer>
       </div>
     </div>
   </div>
+
   <script src="vendors/base/vendor.bundle.base.js"></script>
   <script src="vendors/chart.js/Chart.min.js"></script>
   <script src="vendors/datatables.net/jquery.dataTables.js"></script>
@@ -85,231 +226,663 @@
   <script src="js/jquery.dataTables.js"></script>
   <script src="js/dataTables.bootstrap4.js"></script>
   <script src="js/jquery.cookie.js" type="text/javascript"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
   <script>
-    (function () {
-      /* 切片图像地址由业务侧配置或上传结果传入，此处为前端联调占位 */
-      var viewerImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/82/Histopathology_of_invasive_ductal_carcinoma_of_the_breast.jpg";
-      var viewer = null;
-      var heatmapOverlay = null;
-      var stepTimer = null;
-      var heatTimer = null;
-      var state = { running: false, paused: false, stepIndex: 0, heatIndex: 0 };
+    (function (window, document) {
+      'use strict';
 
-      function appendLog(text, isHighlight) {
-        var $log = $("#log_container");
-        if ($log.data("initialized") !== true) {
-          $log.empty();
-          $log.data("initialized", true);
+      var FLOW_STEPS = ['有效组织提取', '全局特征提取', '可疑区域定位', '热力值计算', '图层渲染对齐'];
+      var stepNameToIndex = {};
+      FLOW_STEPS.forEach(function (name, i) { stepNameToIndex[name] = i + 1; });
+
+      var caseConfig = null;
+      var currentCaseId = 'npc';
+      var scriptSteps = [];
+      var scriptIndex = 0;
+      var timerId = null;
+      var paused = false;
+      var running = false;
+      var heatmapNodes = {};
+      var lastDiagnosisConclusion = '';
+      /** 最近一次高亮参数，用于窗口缩放后重算位置（相对热力图实际绘制区域） */
+      var lastHighlightCoords = null;
+      var highlightResizeTimer = null;
+
+      function getQueryParam(name) {
+        var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        var v = m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
+        return v.trim();
+      }
+
+      /** 相对当前页面解析资源 URL，避免子路径部署或解析歧义 */
+      function resolveAssetUrl(rel) {
+        if (!rel || typeof rel !== 'string') return '';
+        var s = rel.trim();
+        if (!s) return '';
+        if (/^https?:\/\//i.test(s)) return s;
+        try {
+          return new URL(s.replace(/^\.\//, ''), window.location.href).href;
+        } catch (e) {
+          return s.replace(/^\.\//, '');
+        }
+      }
+
+      function resolveUrl(path) {
+        return resolveAssetUrl(path);
+      }
+
+      function normalizeCaseId(raw) {
+        var s = (raw || '').toString().trim().toLowerCase();
+        return s || 'npc';
+      }
+
+      /** fetch 失败时尝试 XHR（部分环境对 file:// 仍不可用，需改用 HTTP 访问） */
+      function loadJson(url) {
+        var abs = resolveAssetUrl(url);
+        return fetch(abs, { cache: 'no-store' })
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .catch(function () {
+            return new Promise(function (resolve, reject) {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', abs, true);
+              xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                  try {
+                    resolve(JSON.parse(xhr.responseText));
+                  } catch (e) {
+                    reject(e);
+                  }
+                } else {
+                  reject(new Error('XHR ' + xhr.status));
+                }
+              };
+              xhr.onerror = function () {
+                reject(new Error('XHR failed'));
+              };
+              xhr.send();
+            });
+          });
+      }
+
+      function showFileProtocolBannerIfNeeded() {
+        if (window.location.protocol !== 'file:') return;
+        var b = document.getElementById('pv_file_protocol_banner');
+        if (b) b.classList.remove('d-none');
+      }
+
+      function configUrlForCaseId(caseId) {
+        if (caseId === 'npc') return 'assets/data/case_config_npc.json';
+        if (caseId === 'crc') return 'assets/data/case_config_crc.json';
+        if (caseId === 'custom') return 'assets/data/case_config_custom.json';
+        return 'assets/data/case_config_' + caseId + '.json';
+      }
+
+      function setSubtitle(name) {
+        document.getElementById('case_subtitle').textContent = '当前病例：' + (name || '—');
+      }
+
+      function setOverallProgress(pct) {
+        pct = Math.max(0, Math.min(100, pct));
+        var bar = document.getElementById('analysis_progress');
+        bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+        bar.textContent = Math.round(pct) + '%';
+      }
+
+      function setCurrentStepText(text) {
+        document.getElementById('current_step').textContent = '当前步骤：' + (text || '—');
+      }
+
+      function resetFlowUI() {
+        for (var i = 1; i <= 5; i++) {
+          var bar = document.getElementById('heatmap_step_' + i);
+          var st = document.getElementById('flow_status_' + i);
+          if (bar) { bar.style.width = '0%'; bar.textContent = '0%'; }
+          if (st) {
+            st.textContent = '待开始';
+            st.className = 'badge badge-secondary';
+          }
+        }
+      }
+
+      function setFlowStepStatus(stepName, progressPercent) {
+        var idx = stepNameToIndex[stepName];
+        if (!idx) return;
+        var p = Math.max(0, Math.min(100, progressPercent || 0));
+        for (var i = 1; i < idx; i++) {
+          var b = document.getElementById('heatmap_step_' + i);
+          var s = document.getElementById('flow_status_' + i);
+          if (b) { b.style.width = '100%'; b.textContent = '100%'; }
+          if (s) { s.textContent = '已完成'; s.className = 'badge badge-success'; }
+        }
+        var curBar = document.getElementById('heatmap_step_' + idx);
+        var curSt = document.getElementById('flow_status_' + idx);
+        if (curBar) { curBar.style.width = p + '%'; curBar.textContent = Math.round(p) + '%'; }
+        if (curSt) {
+          if (p >= 100) {
+            curSt.textContent = '已完成';
+            curSt.className = 'badge badge-success';
+          } else {
+            curSt.textContent = '进行中';
+            curSt.className = 'badge badge-warning text-dark';
+          }
+        }
+      }
+
+      function getOpacityFactor() {
+        var el = document.getElementById('heatmap_opacity');
+        return (parseInt(el.value, 10) || 50) / 100;
+      }
+
+      function applyHeatmapOpacity() {
+        var factor = getOpacityFactor();
+        Object.keys(heatmapNodes).forEach(function (id) {
+          var node = heatmapNodes[id];
+          if (!node || !node.dataset) return;
+          var base = parseFloat(node.dataset.pvBaseOpacity || '0.5');
+          node.style.opacity = String(base * factor);
+        });
+      }
+
+      function isConclusionLine(msg) {
+        if (!msg) return false;
+        return /最终诊断结论|诊断结论[:：]|符合.*(癌|瘤)|疑似阳性|恶性肿瘤|浸润性/i.test(msg);
+      }
+
+      function extractDiagnosis(msg) {
+        var m = /最终诊断结论[:：]\s*(.+)/.exec(msg);
+        if (m && m[1]) return m[1].trim();
+        m = /AI\s*最终诊断结论[:：]\s*(.+)/.exec(msg);
+        if (m && m[1]) return m[1].trim();
+        return '';
+      }
+
+      /** 带时间戳日志，关键结论红色高亮，自动滚动 */
+      function appendLog(message) {
+        var log = document.getElementById('ai_log_container');
+        if (log.querySelector('.text-muted.mb-0') && log.children.length === 1) {
+          log.innerHTML = '';
         }
         var time = new Date().toLocaleTimeString();
-        var cls = isHighlight ? "analysis-log-highlight" : "";
-        $log.append('<div class="small mb-1 ' + cls + '">[' + time + "] " + text + "</div>");
-        $log.scrollTop($log[0].scrollHeight);
-      }
-
-      function setProgress(value) {
-        var v = Math.max(0, Math.min(100, value));
-        $("#analysis_progress_bar")
-          .css("width", v + "%")
-          .attr("aria-valuenow", v)
-          .text(v + "%");
-      }
-
-      function setStep(text) {
-        $("#current_step").text("当前步骤：" + text);
-      }
-
-      function resetHeatmapProgress() {
-        [1, 2, 3, 4].forEach(function (n) {
-          $("#heatmap_step_" + n).css("width", "0%").text("0%");
-        });
-        $("#heatmap_status").text("热力图状态：等待生成");
-        $("#heatmap_opacity").prop("disabled", true).val(35);
-      }
-
-      function setHeatStep(stepNo, value) {
-        var v = Math.max(0, Math.min(100, value));
-        $("#heatmap_step_" + stepNo).css("width", v + "%").text(v + "%");
-      }
-
-      function showHeatmapOverlay() {
-        var container = document.getElementById("slice_viewer");
-        if (heatmapOverlay) {
-          heatmapOverlay.remove();
+        var div = document.createElement('div');
+        div.className = 'small mb-1';
+        var line = '[' + time + '] ' + (message || '');
+        if (isConclusionLine(line)) {
+          div.className += ' pv-log-conclusion';
+          var diag = extractDiagnosis(message || '');
+          if (diag) lastDiagnosisConclusion = diag;
+          else if ((message || '').indexOf('最终诊断结论') !== -1) lastDiagnosisConclusion = message;
         }
-        heatmapOverlay = document.createElement("div");
-        heatmapOverlay.style.position = "absolute";
-        heatmapOverlay.style.inset = "0";
-        heatmapOverlay.style.pointerEvents = "none";
-        heatmapOverlay.style.background =
-          "radial-gradient(circle at 30% 38%, rgba(255,0,0,0.35) 0, rgba(255,0,0,0) 28%)," +
-          "radial-gradient(circle at 62% 55%, rgba(255,120,0,0.3) 0, rgba(255,120,0,0) 24%)," +
-          "radial-gradient(circle at 74% 26%, rgba(255,255,0,0.25) 0, rgba(255,255,0,0) 18%)";
-        heatmapOverlay.style.opacity = "0";
-        heatmapOverlay.style.transition = "opacity 900ms ease";
-        container.appendChild(heatmapOverlay);
-        setTimeout(function () { heatmapOverlay.style.opacity = ($("#heatmap_opacity").val() || 35) / 100; }, 30);
-        $("#heatmap_opacity").prop("disabled", false);
+        div.textContent = line;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
       }
 
-      function clearTimers() {
-        if (stepTimer) clearTimeout(stepTimer);
-        if (heatTimer) clearTimeout(heatTimer);
+      function clearHeatmapOverlays() {
+        var root = document.getElementById('heatmap_overlay_root');
+        root.innerHTML = '';
+        heatmapNodes = {};
       }
 
-      function hideAnalysisCompleteOverlay() {
-        var el = document.getElementById("analysis_complete_overlay");
-        el.classList.remove("show");
-        el.setAttribute("aria-hidden", "true");
+      function clearHighlight() {
+        lastHighlightCoords = null;
+        document.getElementById('patch_marker_layer').innerHTML = '';
       }
 
-      function showAnalysisCompleteOverlay() {
-        var el = document.getElementById("analysis_complete_overlay");
-        el.classList.add("show");
-        el.setAttribute("aria-hidden", "false");
-        appendLog("智能分析流程已全部结束，可进行复核或导出报告。", true);
+      /** 叠加热力图或底图：用于与热力图格子同一坐标系 */
+      function getReferenceImageForOverlay() {
+        var root = document.getElementById('heatmap_overlay_root');
+        var imgs = root.querySelectorAll('img.pv-heatmap-layer');
+        if (imgs.length) return imgs[imgs.length - 1];
+        return document.getElementById('slice_base_image');
       }
 
-      function runHeatmapFlow() {
-        var heatSteps = [
-          { id: 1, text: "热力图状态：有效组织提取中..." },
-          { id: 2, text: "热力图状态：全局特征提取中..." },
-          { id: 3, text: "热力图状态：热力值计算中..." },
-          { id: 4, text: "热力图状态：图层渲染对齐中..." }
-        ];
+      /** object-fit:contain 时，图像在元素盒内的实际绘制矩形（与彩色格子像素一致） */
+      function getDisplayedContentRect(imgEl) {
+        if (!imgEl || !imgEl.naturalWidth) return null;
+        var cw = imgEl.clientWidth;
+        var ch = imgEl.clientHeight;
+        if (!cw || !ch) return null;
+        var iw = imgEl.naturalWidth;
+        var ih = imgEl.naturalHeight;
+        var scale = Math.min(cw / iw, ch / ih);
+        var dw = iw * scale;
+        var dh = ih * scale;
+        var left = (cw - dw) / 2;
+        var top = (ch - dh) / 2;
+        return { left: left, top: top, width: dw, height: dh, cw: cw, ch: ch };
+      }
 
-        function tickHeat(progress, cb) {
-          if (state.paused) return;
-          progress += 20;
-          setHeatStep(heatSteps[state.heatIndex].id, progress);
-          if (progress >= 100) {
-            cb();
-            return;
-          }
-          heatTimer = setTimeout(function () { tickHeat(progress, cb); }, 180);
+      function parsePct(val) {
+        if (val == null || val === '') return 0;
+        if (typeof val === 'number') return val;
+        var s = String(val).trim();
+        if (s.indexOf('%') >= 0) return parseFloat(s) || 0;
+        return parseFloat(s) || 0;
+      }
+
+      /** 0–1 为归一化比例；1–100 为百分比；>100 视为像素（极少用） */
+      function parseCoord01OrPct(val, defaultPercent) {
+        if (val == null || val === '') return defaultPercent;
+        if (typeof val === 'number') {
+          if (val > 0 && val <= 1) return val * 100;
+          return val;
         }
+        return parsePct(val);
+      }
 
-        function nextHeat() {
-          if (state.paused) return;
-          if (state.heatIndex >= heatSteps.length) {
-            showHeatmapOverlay();
-            $("#heatmap_status").text("热力图状态：已生成并完成叠加");
-            appendLog("热力图已生成", true);
-            setTimeout(function () { showAnalysisCompleteOverlay(); }, 650);
-            return;
-          }
-          $("#heatmap_status").text(heatSteps[state.heatIndex].text);
-          tickHeat(0, function () {
-            state.heatIndex += 1;
-            nextHeat();
+      function scheduleHighlightResize() {
+        if (highlightResizeTimer) window.clearTimeout(highlightResizeTimer);
+        highlightResizeTimer = window.setTimeout(function () {
+          highlightResizeTimer = null;
+          if (lastHighlightCoords) highlightPatch(lastHighlightCoords);
+        }, 120);
+      }
+
+      /** 叠加热力图：淡入、自适应、受滑块与 baseOpacity 控制 */
+      function showHeatmap(image_path, heatmap_id, opacity) {
+        var id = heatmap_id || 'heatmap_' + Date.now();
+        var root = document.getElementById('heatmap_overlay_root');
+        if (heatmapNodes[id]) {
+          try { root.removeChild(heatmapNodes[id]); } catch (e) {}
+          delete heatmapNodes[id];
+        }
+        var img = document.createElement('img');
+        img.className = 'pv-heatmap-layer';
+        img.id = id;
+        img.alt = '';
+        var baseOp = opacity != null ? opacity : 0.5;
+        img.dataset.pvBaseOpacity = String(baseOp);
+        img.style.opacity = '0';
+        img.src = resolveUrl(image_path);
+        function fadeIn() {
+          requestAnimationFrame(function () {
+            img.style.opacity = String(baseOp * getOpacityFactor());
           });
         }
-        nextHeat();
+        img.onload = fadeIn;
+        img.onerror = fadeIn;
+        root.appendChild(img);
+        if (img.complete) fadeIn();
+        heatmapNodes[id] = img;
+        document.getElementById('heatmap_opacity').disabled = false;
       }
 
-      var multiscaleStepCount = 4;
-      function runMultiscaleAnalysis(fromCurrent) {
-        var steps = [
-          { progress: 15, title: "2.5倍低倍全局检视", log: "已完成组织分割，进入低倍全局筛查。", zoom: 2.5, pan: new OpenSeadragon.Point(0.42, 0.48), highlight: false },
-          { progress: 45, title: "10倍中倍疑似区域复核", log: "病灶定位完成：已锁定可疑病灶核心区域。", zoom: 10, pan: new OpenSeadragon.Point(0.61, 0.56), highlight: true },
-          { progress: 80, title: "40倍高倍细胞核细节分析", log: "恶性判定推理中：核异型与染色质分布特征显著。", zoom: 40, pan: new OpenSeadragon.Point(0.73, 0.31), highlight: true },
-          { progress: 100, title: "生成热力图与诊断报告", log: "分析完成，判定：恶性，概率91%。", zoom: 8, pan: new OpenSeadragon.Point(0.56, 0.48), highlight: true }
-        ];
-
-        if (!fromCurrent) {
-          state.stepIndex = 0;
-          state.heatIndex = 0;
-          setProgress(0);
-          setStep("开始预处理");
-          resetHeatmapProgress();
-          appendLog("【AI 思考日志】");
-          appendLog("已开始分析");
+      /** 隐藏指定热力图：淡出后移除 */
+      function hideHeatmap(heatmap_id) {
+        var el = heatmapNodes[heatmap_id] || document.getElementById(heatmap_id);
+        if (!el || el._pvHiding) return;
+        el._pvHiding = true;
+        var finished = false;
+        function done() {
+          if (finished) return;
+          finished = true;
+          if (el.parentNode) el.parentNode.removeChild(el);
+          delete heatmapNodes[heatmap_id];
+          if (Object.keys(heatmapNodes).length === 0) {
+            document.getElementById('heatmap_opacity').disabled = true;
+          }
         }
+        el.style.opacity = '0';
+        var t = window.setTimeout(done, 500);
+        el.addEventListener('transitionend', function te() {
+          el.removeEventListener('transitionend', te);
+          window.clearTimeout(t);
+          done();
+        });
+      }
 
-        function next() {
-          if (state.paused) return;
-          if (state.stepIndex >= steps.length) {
-            runHeatmapFlow();
+      /**
+       * 扫描框：与热力图「内容矩形」对齐（非整层黑边）。
+       * coordinates.left/top：框中心在「内容区」内的位置（默认百分比，如 "43%"）；
+       * 也可为 0–1 小数表示归一化。
+       * 可选 width/height：内容区宽/高的百分比，用于贴合单格（默认正方形 cell_size）。
+       */
+      function highlightPatch(coordinates) {
+        lastHighlightCoords = coordinates || null;
+        var layer = document.getElementById('patch_marker_layer');
+        layer.innerHTML = '';
+
+        function apply() {
+          var ref = getReferenceImageForOverlay();
+          var stack = document.getElementById('slice_stack');
+          if (!ref || !stack) return;
+          var rect = getDisplayedContentRect(ref);
+          if (!rect) {
+            if (ref.complete === false || ref.naturalWidth === 0) {
+              ref.addEventListener('load', function once() {
+                ref.removeEventListener('load', once);
+                apply();
+              });
+            }
             return;
           }
-          var step = steps[state.stepIndex++];
-          setProgress(step.progress);
-          setStep(step.title);
-          appendLog(step.log, step.highlight);
-          viewer.viewport.zoomTo(step.zoom, null, true);
-          viewer.viewport.panTo(step.pan, true);
-          stepTimer = setTimeout(next, 2200);
+
+          var c = coordinates || {};
+          var lx = parseCoord01OrPct(c.left, 50);
+          var ty = parseCoord01OrPct(c.top, 50);
+          var cx = rect.left + (lx / 100) * rect.width;
+          var cy = rect.top + (ty / 100) * rect.height;
+
+          var wPx;
+          var hPx;
+          var cw = parsePct(c.width);
+          var ch = parsePct(c.height);
+          var cs = parsePct(c.cell_size);
+          if (cw > 0 && ch > 0) {
+            wPx = (cw / 100) * rect.width;
+            hPx = (ch / 100) * rect.height;
+          } else if (cw > 0) {
+            wPx = (cw / 100) * rect.width;
+            hPx = wPx;
+          } else if (cs > 0) {
+            var side = (cs / 100) * Math.min(rect.width, rect.height);
+            wPx = side;
+            hPx = side;
+          } else {
+            var defSide = Math.min(rect.width, rect.height) * 0.065;
+            wPx = defSide;
+            hPx = defSide;
+          }
+
+          var sw = stack.clientWidth;
+          var sh = stack.clientHeight;
+          if (!sw || !sh) return;
+
+          var leftPct = (cx / sw) * 100;
+          var topPct = (cy / sh) * 100;
+          var wPct = (wPx / sw) * 100;
+          var hPct = (hPx / sh) * 100;
+
+          var box = document.createElement('div');
+          box.className = 'pv-highlight-box';
+          box.style.left = leftPct + '%';
+          box.style.top = topPct + '%';
+          box.style.width = Math.max(wPct, 0.4) + '%';
+          box.style.height = Math.max(hPct, 0.4) + '%';
+          layer.appendChild(box);
         }
-        next();
+
+        apply();
       }
 
-      $(function () {
-        var container = document.getElementById("slice_viewer");
-        container.innerHTML = "";
-        container.style.position = "relative";
-        container.style.background = "#111";
+      function showPatchModal(patch_image_path, description) {
+        var img = document.getElementById('patch_modal_img');
+        var tx = document.getElementById('patch_modal_text');
+        img.src = resolveUrl(patch_image_path);
+        tx.textContent = description || '';
+        tx.className = 'small text-muted mb-0';
+        var modalEl = document.getElementById('patch_modal');
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        } else if (window.jQuery && jQuery.fn.modal) {
+          jQuery(modalEl).modal('show');
+        }
+      }
 
-        viewer = OpenSeadragon({
-          id: "slice_viewer",
-          prefixUrl: "https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/images/",
-          showNavigator: true,
-          navigatorPosition: "BOTTOM_RIGHT",
-          animationTime: 1.2,
-          blendTime: 0.1,
-          constrainDuringPan: true,
-          maxZoomPixelRatio: 3,
-          minZoomLevel: 0.8,
-          visibilityRatio: 1,
-          tileSources: {
-            type: "image",
-            url: viewerImageUrl
+      /** 更新总进度条、分步条与当前步骤文案 */
+      function updateProgress(step_name, progress_value) {
+        var pv = progress_value != null ? progress_value : 0;
+        setOverallProgress(pv);
+        if (step_name) {
+          setFlowStepStatus(step_name, pv);
+          setCurrentStepText(step_name);
+        }
+      }
+
+      function runJsonStep(item) {
+        switch (item.type) {
+          case 'log':
+            appendLog(item.message || '');
+            break;
+          case 'step_update':
+            updateProgress(item.step, item.progress != null ? item.progress : 0);
+            if (item.log_message) appendLog(item.log_message);
+            break;
+          case 'show_initial_heatmap':
+            clearHeatmapOverlays();
+            showHeatmap(item.image_path, item.heatmap_id || 'initial_heatmap', item.opacity != null ? item.opacity : 0.5);
+            if (item.log_message) appendLog(item.log_message);
+            setCurrentStepText('粗糙热力图叠加');
+            break;
+          case 'highlight_patch':
+            highlightPatch(item.coordinates || {});
+            if (item.log_message) appendLog(item.log_message);
+            break;
+          case 'show_patch_modal':
+            showPatchModal(item.patch_image_path, item.log_message || '');
+            if (item.log_message) appendLog(item.log_message);
+            break;
+          case 'show_final_heatmap':
+            if (item.initial_heatmap_id) hideHeatmap(item.initial_heatmap_id);
+            showHeatmap(item.final_heatmap_path, item.heatmap_id || 'final_heatmap', item.opacity != null ? item.opacity : 0.6);
+            if (item.log_message) appendLog(item.log_message);
+            setCurrentStepText('精细诊断热力图');
+            break;
+          default:
+            break;
+        }
+      }
+
+      function scheduleNext() {
+        if (paused || !running) return;
+        if (scriptIndex >= scriptSteps.length) {
+          running = false;
+          document.getElementById('start_btn').disabled = false;
+          setCurrentStepText('分析完成');
+          document.getElementById('analysis_complete_overlay').style.display = 'flex';
+          document.getElementById('analysis_complete_overlay').setAttribute('aria-hidden', 'false');
+          return;
+        }
+        var item = scriptSteps[scriptIndex];
+        var delay = item.delay != null ? item.delay : 0;
+        timerId = window.setTimeout(function () {
+          if (paused || !running) return;
+          runJsonStep(item);
+          scriptIndex++;
+          scheduleNext();
+        }, delay);
+      }
+
+      /** 通用流程执行入口：按顺序执行步骤数组，同步动画与日志 */
+      function executeScript(script, clearLog) {
+        if (!Array.isArray(script) || !script.length) {
+          appendLog('流程步骤为空或格式错误。');
+          return;
+        }
+        scriptSteps = script.slice();
+        document.getElementById('analysis_complete_overlay').style.display = 'none';
+        resetExecutionState(clearLog === true);
+        running = true;
+        paused = false;
+        document.getElementById('start_btn').disabled = true;
+        appendLog('开始执行分析流程。');
+        scheduleNext();
+      }
+
+      function pauseRun() {
+        if (!running) return;
+        paused = true;
+        if (timerId) clearTimeout(timerId);
+        timerId = null;
+        appendLog('用户操作：分析已暂停。');
+      }
+
+      function resumeRun() {
+        if (!running || !paused) return;
+        paused = false;
+        appendLog('用户操作：分析已继续。');
+        scheduleNext();
+      }
+
+      function resetExecutionState(clearLog) {
+        if (timerId) clearTimeout(timerId);
+        timerId = null;
+        paused = false;
+        running = false;
+        scriptIndex = 0;
+        setOverallProgress(0);
+        setCurrentStepText('等待分析启动');
+        clearHeatmapOverlays();
+        clearHighlight();
+        resetFlowUI();
+        document.getElementById('heatmap_opacity').value = '50';
+        document.getElementById('heatmap_opacity').disabled = true;
+        document.getElementById('start_btn').disabled = false;
+        if (clearLog) {
+          document.getElementById('ai_log_container').innerHTML = '<p class="small text-muted mb-0">等待分析启动...</p>';
+        }
+        document.getElementById('analysis_complete_overlay').style.display = 'none';
+        document.getElementById('analysis_complete_overlay').setAttribute('aria-hidden', 'true');
+        applyHeatmapOpacity();
+      }
+
+      /** 异步加载病例配置 JSON */
+      function loadCaseConfig(case_id) {
+        var cid = normalizeCaseId(case_id != null && case_id !== '' ? case_id : getQueryParam('case_id') || 'npc');
+        currentCaseId = cid;
+        var url = configUrlForCaseId(cid);
+        return loadJson(url).catch(function (err) {
+          if (cid === 'custom') {
+            var slideHint = '';
+            try { slideHint = sessionStorage.getItem('pv_upload_slide_id') || ''; } catch (e) {}
+            return {
+              case_id: 'custom',
+              case_name: '本地上传病例' + (slideHint ? '（编号 ' + slideHint + '）' : ''),
+              slide_id: slideHint || '—',
+              assets: { stitch_image: 'assets/images/117176_stitch.png', initial_heatmap: '', final_heatmap: '', patches_folder: '' },
+              analysis_script: 'assets/data/analysis_npc.json'
+            };
           }
+          throw err;
         });
+      }
 
-        $("#heatmap_opacity").on("input", function () {
-          if (heatmapOverlay) {
-            heatmapOverlay.style.opacity = ($(this).val() || 35) / 100;
-          }
-        });
+      function applyConfigToPage(cfg) {
+        caseConfig = cfg;
+        setSubtitle(cfg.case_name || '—');
+        var imgEl = document.getElementById('slice_base_image');
+        var src = resolveUrl(cfg.assets && cfg.assets.stitch_image);
+        document.getElementById('analysis_supplement_text').textContent = '';
+        if (src) {
+          imgEl.onload = function () { imgEl.style.visibility = 'visible'; };
+          imgEl.onerror = function () {
+            imgEl.style.visibility = 'visible';
+            document.getElementById('analysis_supplement_text').textContent = '全景图加载失败，请检查素材路径或网络环境。';
+          };
+          imgEl.src = src;
+        } else {
+          imgEl.style.visibility = 'visible';
+          document.getElementById('analysis_supplement_text').textContent = '未配置全景图路径。';
+        }
+        if (cfg.case_id === 'custom') {
+          document.getElementById('analysis_supplement_text').textContent = '本地病例当前沿用与标准病例一致的分析流程；接入后端后可对接实际上传切片。';
+        }
+        var scriptUrl = cfg.analysis_script ? resolveUrl(cfg.analysis_script) : '';
+        if (!scriptUrl) {
+          scriptSteps = [];
+          appendLog('病例未配置分析流程文件路径。');
+          return Promise.resolve();
+        }
+        return loadJson(scriptUrl)
+          .then(function (data) {
+            scriptSteps = Array.isArray(data) ? data : [];
+            appendLog('数据已就绪，请点击「开始分析」启动智能分析。');
+          })
+          .catch(function () {
+            scriptSteps = [];
+            appendLog('分析流程加载失败：' + scriptUrl);
+          });
+      }
 
-        $("#analysis_complete_dismiss").on("click", hideAnalysisCompleteOverlay);
-        $("#analysis_complete_overlay").on("click", function (e) {
-          if (e.target === this) hideAnalysisCompleteOverlay();
-        });
+      function loadCaseAndScript() {
+        showFileProtocolBannerIfNeeded();
+        var cid = normalizeCaseId(getQueryParam('case_id') || 'npc');
+        currentCaseId = cid;
+        loadCaseConfig(cid)
+          .then(function (cfg) { return applyConfigToPage(cfg); })
+          .catch(function () {
+            setSubtitle('配置加载失败');
+            var sup = document.getElementById('analysis_supplement_text');
+            if (window.location.protocol === 'file:') {
+              sup.textContent = '无法加载病例配置：以 file:// 打开时浏览器通常禁止读取本地 JSON。请按上方黄色提示通过 HTTP 访问。';
+            } else {
+              sup.textContent = '无法加载病例配置。请确认与 analysis.html 同目录下存在 template/assets/data/case_config_*.json。';
+            }
+          });
+      }
 
-        $("#start_btn").on("click", function () {
-          hideAnalysisCompleteOverlay();
-          clearTimers();
-          state.running = true;
-          state.paused = false;
-          runMultiscaleAnalysis(false);
-        });
+      function buildReportUrl() {
+        var p = new URLSearchParams();
+        p.set('case_id', currentCaseId || getQueryParam('case_id') || 'npc');
+        if (lastDiagnosisConclusion) p.set('diagnosis_conclusion', lastDiagnosisConclusion);
+        return 'report.html?' + p.toString();
+      }
 
-        $("#pause_btn").on("click", function () {
-          if (!state.running || state.paused) return;
-          state.paused = true;
-          clearTimers();
-          appendLog("分析流程已暂停。");
-        });
+      function onReportClick() {
+        window.location.href = buildReportUrl();
+      }
 
-        $("#resume_btn").on("click", function () {
-          if (!state.running || !state.paused) return;
-          state.paused = false;
-          appendLog("分析流程已继续。");
-          if (state.stepIndex < multiscaleStepCount) {
-            runMultiscaleAnalysis(true);
-          } else {
-            runHeatmapFlow();
-          }
-        });
+      function restartAnalysis() {
+        resetExecutionState(true);
+        lastDiagnosisConclusion = '';
+        var cid = normalizeCaseId(getQueryParam('case_id') || currentCaseId || 'npc');
+        loadCaseConfig(cid)
+          .then(function (cfg) { return applyConfigToPage(cfg); })
+          .catch(function () {
+            setSubtitle('配置加载失败');
+          });
+      }
 
-        viewer.addHandler("open", function () {
-          appendLog("切片视图已就绪，请点击「开始分析」启动多尺度分析流程。");
-        });
+      window.PathoAnalysis = {
+        appendLog: appendLog,
+        loadCaseConfig: loadCaseConfig,
+        showHeatmap: showHeatmap,
+        hideHeatmap: hideHeatmap,
+        highlightPatch: highlightPatch,
+        clearHighlight: clearHighlight,
+        showPatchModal: showPatchModal,
+        updateProgress: updateProgress,
+        executeScript: executeScript,
+        getCaseConfig: function () { return caseConfig; },
+        getScriptSteps: function () { return scriptSteps; },
+        getLastDiagnosis: function () { return lastDiagnosisConclusion; }
+      };
+
+      document.getElementById('heatmap_opacity').addEventListener('input', applyHeatmapOpacity);
+
+      window.addEventListener('resize', scheduleHighlightResize);
+
+      document.getElementById('start_btn').addEventListener('click', function () {
+        document.getElementById('analysis_complete_overlay').style.display = 'none';
+        if (!scriptSteps.length) {
+          appendLog('分析流程尚未就绪。');
+          return;
+        }
+        if (running && !paused) return;
+        if (paused) {
+          resumeRun();
+          return;
+        }
+        var clearLog = scriptIndex >= scriptSteps.length;
+        executeScript(scriptSteps, clearLog);
       });
-    })();
+
+      document.getElementById('pause_btn').addEventListener('click', pauseRun);
+      document.getElementById('resume_btn').addEventListener('click', resumeRun);
+      document.getElementById('restart_btn').addEventListener('click', restartAnalysis);
+      document.getElementById('report_btn').addEventListener('click', onReportClick);
+
+      document.getElementById('analysis_complete_dismiss').addEventListener('click', function () {
+        var ov = document.getElementById('analysis_complete_overlay');
+        ov.style.display = 'none';
+        ov.setAttribute('aria-hidden', 'true');
+      });
+
+      loadCaseAndScript();
+    })(window, document);
   </script>
 </body>
 </html>

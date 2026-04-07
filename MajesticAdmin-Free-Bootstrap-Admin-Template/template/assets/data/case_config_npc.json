@@ -1,0 +1,32 @@
+{
+  "case_id": "npc",
+  "case_name": "鼻咽非角化性癌标准病例",
+  "slide_id": "117176",
+  "assets": {
+    "stitch_image": "assets/images/117176_stitch.png",
+    "initial_heatmap": "assets/images/117176_retrieval_heatmap.png",
+    "final_heatmap": "assets/images/117176_final_heatmap.png",
+    "patches_folder": "assets/images/patches/"
+  },
+  "patch_list": [
+    {
+      "patch_id": "1_43297_12992.jpg",
+      "patch_name": "最高风险病灶",
+      "coordinates": {"top": "12%", "left": "43%"},
+      "description": "镜下可见肿瘤组织边界不规则，细胞呈明显异型性，核大深染，伴出血及淋巴细胞浸润，符合恶性肿瘤形态学特征。"
+    },
+    {
+      "patch_id": "2_59681_17088.jpg",
+      "patch_name": "次高风险病灶",
+      "coordinates": {"top": "17%", "left": "59%"},
+      "description": "镜下可见大量炎症细胞浸润，伴局部出血，肿瘤细胞呈浸润性生长，破坏周围正常组织结构。"
+    },
+    {
+      "patch_id": "3_67873_4800.jpg",
+      "patch_name": "可疑排查区域",
+      "coordinates": {"top": "4%", "left": "67%"},
+      "description": "镜下可见组织形态规则，细胞形态均一，未见明显异型性，为正常黏膜组织，排除恶性病变。"
+    }
+  ],
+  "analysis_script": "assets/data/analysis_npc.json"
+}

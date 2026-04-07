@@ -1,0 +1,32 @@
+{
+  "case_id": "crc",
+  "case_name": "结直肠腺癌标准病例",
+  "slide_id": "CRC-001",
+  "assets": {
+    "stitch_image": "assets/images/crc_stitch.png",
+    "initial_heatmap": "assets/images/crc_retrieval_heatmap.png",
+    "final_heatmap": "assets/images/crc_final_heatmap.png",
+    "patches_folder": "assets/images/crc_patches/"
+  },
+  "patch_list": [
+    {
+      "patch_id": "1_22528_40960.jpeg",
+      "patch_name": "最高风险病灶",
+      "coordinates": {"top": "37.5%", "left": "22%"},
+      "description": "镜下可见中分化腺癌病灶，腺体不规则融合，细胞异型性明显，核分裂象易见。"
+    },
+    {
+      "patch_id": "2_28672_49152.jpeg",
+      "patch_name": "次高风险病灶",
+      "coordinates": {"top": "45%", "left": "28%"},
+      "description": "镜下可见腺体拥挤呈“背靠背”排列，符合腺癌形态学特征，支持恶性诊断。"
+    },
+    {
+      "patch_id": "3_18432_36864.jpeg",
+      "patch_name": "浸润深度评估区域",
+      "coordinates": {"top": "34%", "left": "18%"},
+      "description": "镜下可见肿瘤细胞浸润至固有肌层，符合浸润性腺癌诊断标准。"
+    }
+  ],
+  "analysis_script": "assets/data/analysis_crc.json"
+}

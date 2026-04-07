@@ -8,6 +8,13 @@
     "final_heatmap": "assets/images/crc_final_heatmap.png",
     "patches_folder": "assets/images/crc_patches/"
   },
+  "high_risk_patches": [
+    "1_22528_40960.jpeg",
+    "2_28672_49152.jpeg",
+    "3_18432_36864.jpeg"
+  ],
+  "all_patches_folder": "assets/images/crc_all_patches/",
+  "all_patches_manifest": "assets/images/crc_all_patches/manifest.json",
   "patch_list": [
     {
       "patch_id": "1_22528_40960.jpeg",

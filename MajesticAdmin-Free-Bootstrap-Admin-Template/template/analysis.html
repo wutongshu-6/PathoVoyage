@@ -24,9 +24,197 @@
     .analysis-side-card .progress { height: 8px; border-radius: 4px; }
     .analysis-subtitle { font-size: 12px; color: #6c757d; margin-bottom: 6px; }
     #analysis_progress { transition: width 0.2s ease; background-color: #165DFF; border-color: #165DFF; }
-    #ai_log_container {
+    .pv-slide-viewer {
+      background: #0d0d0d;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #slice_stack {
+      width: 100%;
+      max-width: 100%;
+    }
+    #slice_base_image.pv-slide-img {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      max-height: min(78vh, 720px);
+      vertical-align: top;
+    }
+    .pv-ai-log-preview {
       background: #e8f4fc !important;
       border: 1px solid #cfe8f8 !important;
+      min-height: 240px;
+      max-height: min(42vh, 440px);
+      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .pv-ai-log-modal-body {
+      max-height: 75vh;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+    .pv-ai-log-click-area { cursor: pointer; }
+    .pv-ai-log-click-area:focus { outline: 2px solid rgba(22, 93, 255, 0.45); outline-offset: 2px; }
+
+    /* Patch 图库弹窗：与智能分析卡片、主色 #165DFF 统一 */
+    .pv-patch-gallery-modal .modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(22, 93, 255, 0.12);
+      border-left: 4px solid var(--pv-blue);
+      box-shadow: 0 8px 40px rgba(15, 23, 42, 0.1);
+      background: #fff;
+    }
+    .pv-patch-gallery-modal .modal-header {
+      background: linear-gradient(135deg, rgba(22, 93, 255, 0.06) 0%, #fff 55%);
+      border-bottom: 1px solid rgba(22, 93, 255, 0.1);
+    }
+    .pv-patch-gallery-modal .modal-title {
+      color: #0f172a;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .pv-patch-gallery-modal #patch_gallery_counter {
+      color: var(--pv-blue);
+      font-weight: 600;
+    }
+    .pv-patch-gallery-modal .pv-gallery-nav {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+    }
+    .pv-patch-gallery-modal .pv-gallery-nav .mdi {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .pv-patch-gallery-modal .pv-patch-gallery-frame {
+      min-width: 0;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.5rem;
+      box-shadow: inset 0 0 0 1px rgba(22, 93, 255, 0.12);
+    }
+    .pv-patch-gallery-modal #patch_gallery_img {
+      max-height: 75vh;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      vertical-align: middle;
+    }
+
+    /* 病灶高倍观察：左图右日志，与主站卡片/日志样式统一 */
+    .pv-patch-observe-modal .modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(22, 93, 255, 0.12);
+      border-left: 4px solid var(--pv-blue);
+      box-shadow: 0 8px 40px rgba(15, 23, 42, 0.1);
+    }
+    .pv-patch-observe-modal .modal-header {
+      background: linear-gradient(135deg, rgba(22, 93, 255, 0.06) 0%, #fff 55%);
+      border-bottom: 1px solid rgba(22, 93, 255, 0.1);
+    }
+    .pv-patch-observe-modal .modal-title {
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .pv-patch-observe-modal .pv-patch-observe-frame {
+      background: #fff;
+      border-radius: 10px;
+      padding: 0.5rem;
+      box-shadow: inset 0 0 0 1px rgba(22, 93, 255, 0.12);
+    }
+    .pv-patch-observe-modal #patch_modal_img {
+      max-height: min(62vh, 520px);
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    .pv-patch-observe-modal #patch_modal_log_container {
+      background: #e8f4fc !important;
+      border: 1px solid #cfe8f8 !important;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    @media (min-width: 992px) {
+      .pv-patch-observe-modal .pv-patch-modal-split-left {
+        border-right: 1px solid rgba(22, 93, 255, 0.12);
+        padding-right: 1rem;
+      }
+    }
+
+    /* 开始分析后：放大阅片区 + 压缩上下留白，使切片与日志尽量同屏 */
+    body.pv-analysis-running .main-panel > .content-wrapper {
+      padding-top: 0.35rem;
+      padding-bottom: 0.5rem;
+    }
+    body.pv-analysis-running .analysis-page-hero {
+      padding: 0.55rem 1.1rem;
+      margin-bottom: 0.35rem !important;
+    }
+    body.pv-analysis-running .analysis-page-hero h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.15rem !important;
+    }
+    body.pv-analysis-running .analysis-page-hero #case_subtitle {
+      font-size: 0.8125rem;
+    }
+    body.pv-analysis-running .pv-analysis-main-row > [class*="grid-margin"] {
+      margin-bottom: 0.55rem !important;
+    }
+    body.pv-analysis-running .pv-analysis-log-row > [class*="grid-margin"] {
+      margin-bottom: 0.45rem !important;
+    }
+    body.pv-analysis-running .analysis-side-card .card-body {
+      padding-top: 0.85rem;
+      padding-bottom: 0.85rem;
+    }
+    body.pv-analysis-running #slice_base_image.pv-slide-img {
+      max-height: min(88vh, 960px);
+      transition: max-height 0.45s ease, transform 0.45s ease;
+    }
+    body.pv-analysis-running #slice_stack {
+      transform: scale(1.045);
+      transform-origin: center top;
+      transition: transform 0.45s ease;
+    }
+    body.pv-analysis-running .pv-slide-viewer {
+      overflow: visible;
+    }
+    body.pv-analysis-running .analysis-viewer-wrap {
+      overflow: visible;
+    }
+    body.pv-analysis-running .pv-ai-log-preview {
+      min-height: 72px;
+      max-height: min(22vh, 260px);
+      transition: max-height 0.35s ease, min-height 0.35s ease;
+    }
+    body.pv-analysis-running .footer {
+      padding-top: 0.65rem !important;
+    }
+    body.pv-analysis-running .pv-analysis-log-row .card-body {
+      padding-top: 0.65rem;
+      padding-bottom: 0.65rem;
+    }
+    @media (max-width: 991px) {
+      body.pv-analysis-running #slice_stack {
+        transform: none;
+      }
+      body.pv-analysis-running #slice_base_image.pv-slide-img {
+        max-height: min(72vh, 640px);
+      }
     }
     .pv-highlight-box {
       position: absolute;
@@ -54,30 +242,93 @@
       pointer-events: none;
       transition: opacity 0.4s ease;
     }
-    #slice_stack { max-width: 100%; max-height: 520px; }
   </style>
 </head>
 <body>
-  <div class="modal fade" id="patch_modal" tabindex="-1" aria-labelledby="patch_modal_title" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal fade" id="ai_log_modal" tabindex="-1" aria-labelledby="ai_log_modal_title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="patch_modal_title">病灶高倍观察</h5>
+        <div class="modal-header py-2">
+          <h5 class="modal-title" id="ai_log_modal_title">AI诊断思考日志</h5>
           <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="modal-body">
-          <img id="patch_modal_img" class="img-fluid d-block mx-auto mb-3" alt="病灶 Patch" />
-          <p id="patch_modal_text" class="small text-muted mb-0"></p>
+        <div class="modal-body pv-ai-log-modal-body" id="ai_log_modal_body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade pv-patch-observe-modal" id="patch_modal" tabindex="-1" aria-labelledby="patch_modal_title" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header py-3 pr-4">
+          <div class="d-flex align-items-start">
+            <span class="mdi mdi-microscope text-primary mr-2" style="font-size:1.55rem;line-height:1.2;"></span>
+            <div>
+              <h5 class="modal-title mb-1" id="patch_modal_title">病灶高倍观察</h5>
+              <p class="small text-muted mb-0">左侧为当前高危 Patch，右侧同步展示 AI 诊断思考日志</p>
+            </div>
+          </div>
+          <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body bg-light py-3">
+          <div class="row">
+            <div class="col-12 col-lg-6 pv-patch-modal-split-left mb-3 mb-lg-0">
+              <p class="small font-weight-semibold text-dark mb-2"><i class="mdi mdi-image-filter-center-focus text-primary"></i> 高危病灶 Patch</p>
+              <div class="pv-patch-observe-frame text-center">
+                <img id="patch_modal_img" alt="病灶 Patch" />
+              </div>
+              <p id="patch_modal_text" class="small text-muted mt-3 mb-0 pt-2 border-top" style="border-color: rgba(22,93,255,0.12) !important;"></p>
+            </div>
+            <div class="col-12 col-lg-6 pl-lg-3">
+              <p class="small font-weight-semibold text-dark mb-2"><i class="mdi mdi-text-box-search-outline text-primary"></i> AI 诊断思考日志</p>
+              <div id="patch_modal_log_container" class="rounded p-3" style="max-height: min(62vh, 520px); overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade pv-patch-gallery-modal" id="patch_gallery_modal" tabindex="-1" aria-labelledby="patch_gallery_title" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header py-3 pr-4">
+          <div class="d-flex align-items-start">
+            <span class="mdi mdi-image-multiple-outline text-primary mr-2" style="font-size:1.65rem;line-height:1.2;"></span>
+            <div>
+              <h5 class="modal-title mb-1" id="patch_gallery_title">Patch 浏览</h5>
+              <div class="small text-muted mb-0">当前 <span id="patch_gallery_counter"></span></div>
+            </div>
+          </div>
+          <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body bg-light py-4">
+          <div class="d-flex align-items-center justify-content-center flex-wrap">
+            <button type="button" class="btn btn-outline-primary pv-gallery-nav mr-2 mb-2" id="patch_gallery_prev" aria-label="上一张">
+              <i class="mdi mdi-chevron-left"></i>
+            </button>
+            <div class="pv-patch-gallery-frame flex-grow-1 mx-2 mb-2 text-center" style="min-width: 0;">
+              <img id="patch_gallery_img" class="rounded d-inline-block" alt="" />
+            </div>
+            <button type="button" class="btn btn-outline-primary pv-gallery-nav ml-2 mb-2" id="patch_gallery_next" aria-label="下一张">
+              <i class="mdi mdi-chevron-right"></i>
+            </button>
+          </div>
+          <p class="small text-muted text-center mt-3 mb-0 text-break font-weight-medium" id="patch_gallery_filename"></p>
         </div>
       </div>
     </div>
   </div>
 
   <div id="analysis_complete_overlay" class="analysis-complete-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.55);">
-    <div class="card p-4 text-center" style="max-width:380px;">
+    <div class="card p-4 text-center" style="max-width:480px;">
       <div class="mb-2 text-primary"><i class="mdi mdi-check-decagram" style="font-size:3rem;"></i></div>
       <h5 class="mb-2">智能分析已完成</h5>
       <p class="text-muted small mb-3">多尺度阅片与热力图叠加已结束，可进行复核或生成报告。</p>
+      <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+        <button type="button" class="btn btn-outline-danger btn-sm btn-pv-gallery-high">浏览高危 Patch</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm btn-pv-gallery-all">浏览所有 Patch</button>
+      </div>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <a href="report.html" class="btn btn-primary btn-sm">前往报告管理</a>
         <button type="button" class="btn btn-outline-secondary btn-sm" id="analysis_complete_dismiss">关闭</button>
@@ -98,7 +349,11 @@
         <ul class="navbar-nav navbar-nav-right">
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-              <img src="images/faces/face5.jpg" alt="profile"/>
+              <span class="pv-nav-avatar-wrap" role="img" aria-label="用户头像">
+                <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                  <circle cx="16" cy="16" r="13" fill="#1a4a8e" stroke="#eaeef5" stroke-width="2"/>
+                </svg>
+              </span>
               <span class="nav-profile-name">病理医生</span>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
@@ -138,14 +393,14 @@
             <code>http://localhost:8080/analysis.html?case_id=npc</code>（端口以实际为准）。
           </div>
 
-          <div class="row">
+          <div class="row pv-analysis-main-row">
             <div class="col-md-8 grid-margin stretch-card">
               <div class="card analysis-card-accent">
                 <div class="card-body">
                   <p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-microscope text-primary"></i> 病理切片视图</p>
-                  <div id="slice_viewer" class="analysis-viewer-wrap d-flex align-items-center justify-content-center position-relative" style="min-height: 520px; background: #111;">
-                    <div id="slice_stack" class="position-relative d-inline-block mx-auto">
-                      <img id="slice_base_image" alt="全景切片" class="d-block" style="max-width: 100%; max-height: 520px; width: auto; height: auto; object-fit: contain; visibility: hidden;" />
+                  <div id="slice_viewer" class="analysis-viewer-wrap pv-slide-viewer position-relative w-100">
+                    <div id="slice_stack" class="position-relative w-100 mx-auto">
+                      <img id="slice_base_image" alt="全景切片" class="pv-slide-img d-block" style="visibility: hidden;" />
                       <div id="heatmap_overlay_root" class="position-absolute top-0 left-0 w-100 h-100" style="pointer-events: none;"></div>
                       <div id="patch_marker_layer" class="position-absolute top-0 left-0 w-100 h-100" style="pointer-events: none;"></div>
                     </div>
@@ -187,9 +442,32 @@
                   <label class="mb-1 small" for="heatmap_opacity">热力图透明度调节</label>
                   <input id="heatmap_opacity" type="range" class="form-range mb-3" min="0" max="100" value="50" disabled>
 
-                  <p class="mb-2 small fw-semibold text-dark">AI诊断思考日志</p>
-                  <div id="ai_log_container" class="rounded p-2" style="height: 220px; overflow-y: auto;">
-                    <p class="small text-muted mb-0">等待分析启动...</p>
+                  <div id="pv_patch_browse_wrap" class="d-none border-top pt-3">
+                    <p class="mb-2 small fw-semibold text-dark">Patch 浏览</p>
+                    <div class="d-flex flex-wrap gap-2">
+                      <button type="button" class="btn btn-outline-danger btn-sm btn-pv-gallery-high">浏览高危 Patch</button>
+                      <button type="button" class="btn btn-outline-secondary btn-sm btn-pv-gallery-all">浏览所有 Patch</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pv-analysis-log-row">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card analysis-card-accent mb-0">
+                <div class="card-body pt-3">
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <p class="card-title d-flex align-items-center gap-2 mb-0"><i class="mdi mdi-text-box-search-outline text-primary"></i> AI诊断思考日志</p>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="ai_log_expand_btn" title="放大查看完整日志">
+                      <i class="mdi mdi-magnify-plus-outline"></i> 放大查看
+                    </button>
+                  </div>
+                  <div class="pv-ai-log-click-area rounded" id="ai_log_click_area" role="button" tabindex="0" title="点击放大查看">
+                    <div id="ai_log_container" class="pv-ai-log-preview rounded p-3">
+                      <p class="small text-muted mb-0">等待分析启动...</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -418,6 +696,162 @@
         div.textContent = line;
         log.appendChild(div);
         log.scrollTop = log.scrollHeight;
+        syncAiLogModalIfOpen();
+        syncPatchModalLogIfOpen();
+      }
+
+      function syncPatchModalLog() {
+        var main = document.getElementById('ai_log_container');
+        var side = document.getElementById('patch_modal_log_container');
+        if (!main || !side) return;
+        side.innerHTML = main.innerHTML;
+        side.scrollTop = side.scrollHeight;
+      }
+
+      function syncPatchModalLogIfOpen() {
+        var modalEl = document.getElementById('patch_modal');
+        if (!modalEl || !modalEl.classList.contains('show')) return;
+        syncPatchModalLog();
+      }
+
+      function syncAiLogModalIfOpen() {
+        var modalEl = document.getElementById('ai_log_modal');
+        var bodyEl = document.getElementById('ai_log_modal_body');
+        if (!modalEl || !bodyEl) return;
+        if (!modalEl.classList.contains('show')) return;
+        bodyEl.innerHTML = document.getElementById('ai_log_container').innerHTML;
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+      }
+
+      function openAiLogModal() {
+        var bodyEl = document.getElementById('ai_log_modal_body');
+        var modalEl = document.getElementById('ai_log_modal');
+        if (!bodyEl || !modalEl) return;
+        bodyEl.innerHTML = document.getElementById('ai_log_container').innerHTML;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        } else if (window.jQuery && jQuery.fn.modal) {
+          jQuery(modalEl).modal('show');
+        }
+        window.setTimeout(function () {
+          bodyEl.scrollTop = bodyEl.scrollHeight;
+        }, 80);
+      }
+
+      var pvGalleryUrls = [];
+      var pvGalleryIndex = 0;
+
+      function joinPath(folder, file) {
+        var f = String(folder || '').replace(/\/+$/, '');
+        var fn = String(file || '').replace(/^\/+/, '');
+        return f ? f + '/' + fn : fn;
+      }
+
+      function fileNameFromUrl(url) {
+        try {
+          var u = String(url).split('?')[0];
+          return u.split('/').pop() || '';
+        } catch (e) {
+          return '';
+        }
+      }
+
+      function getHighRiskPatchUrls(cfg) {
+        if (!cfg || !cfg.assets) return [];
+        var folder = cfg.assets.patches_folder || '';
+        var files = cfg.high_risk_patches;
+        if (!files || !files.length) {
+          files = (cfg.patch_list || []).map(function (p) { return p.patch_id; }).filter(Boolean);
+        }
+        return files.map(function (fn) { return resolveAssetUrl(joinPath(folder, fn)); });
+      }
+
+      function closeCompleteOverlayIfVisible() {
+        var ov = document.getElementById('analysis_complete_overlay');
+        if (!ov) return;
+        if (ov.style.display === 'none' || ov.style.display === '') return;
+        ov.style.display = 'none';
+        ov.setAttribute('aria-hidden', 'true');
+      }
+
+      function showPatchBrowseControls(visible) {
+        var w = document.getElementById('pv_patch_browse_wrap');
+        if (!w) return;
+        w.classList.toggle('d-none', !visible);
+      }
+
+      function updatePatchGalleryUi() {
+        var img = document.getElementById('patch_gallery_img');
+        var cnt = document.getElementById('patch_gallery_counter');
+        var fnEl = document.getElementById('patch_gallery_filename');
+        if (!pvGalleryUrls.length || !img) return;
+        img.src = pvGalleryUrls[pvGalleryIndex];
+        img.alt = fileNameFromUrl(pvGalleryUrls[pvGalleryIndex]);
+        if (cnt) cnt.textContent = pvGalleryIndex + 1 + ' / ' + pvGalleryUrls.length;
+        if (fnEl) fnEl.textContent = fileNameFromUrl(pvGalleryUrls[pvGalleryIndex]);
+      }
+
+      function stepPatchGallery(delta) {
+        if (!pvGalleryUrls.length) return;
+        pvGalleryIndex = (pvGalleryIndex + delta + pvGalleryUrls.length) % pvGalleryUrls.length;
+        updatePatchGalleryUi();
+      }
+
+      function showPatchGalleryModal(urls, title) {
+        if (!urls || !urls.length) {
+          window.alert('暂无可浏览的 Patch 图片。');
+          return;
+        }
+        pvGalleryUrls = urls;
+        pvGalleryIndex = 0;
+        var t = document.getElementById('patch_gallery_title');
+        if (t) t.textContent = title || 'Patch 浏览';
+        updatePatchGalleryUi();
+        var modalEl = document.getElementById('patch_gallery_modal');
+        if (!modalEl) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        } else if (window.jQuery && jQuery.fn.modal) {
+          jQuery(modalEl).modal('show');
+        }
+      }
+
+      function openPatchGalleryHighRisk() {
+        closeCompleteOverlayIfVisible();
+        var urls = getHighRiskPatchUrls(caseConfig);
+        if (!urls.length) {
+          window.alert('暂无可浏览的高危 Patch。');
+          return;
+        }
+        showPatchGalleryModal(urls, '高危 Patch');
+      }
+
+      function openPatchGalleryAll() {
+        closeCompleteOverlayIfVisible();
+        var cfg = caseConfig;
+        if (!cfg || !cfg.all_patches_manifest) {
+          window.alert('当前病例未配置完整 Patch 列表。');
+          return;
+        }
+        loadJson(cfg.all_patches_manifest)
+          .then(function (data) {
+            var arr = Array.isArray(data) ? data : (data && (data.files || data.list)) || [];
+            if (!Array.isArray(arr)) arr = [];
+            var folder = cfg.all_patches_folder || '';
+            var urls = arr.map(function (fn) { return resolveAssetUrl(joinPath(folder, fn)); });
+            if (!urls.length) {
+              window.alert(
+                '「全部 Patch」清单为空。请将所有 jpg 放入 template/assets/images/all_patches/ 后，在该目录运行：python generate_patch_manifests.py 生成 manifest.json。'
+              );
+              return;
+            }
+            showPatchGalleryModal(urls, '全部 Patch');
+          })
+          .catch(function () {
+            window.alert(
+              '无法加载 manifest.json。请确认 template/assets/images/all_patches/manifest.json 存在；若尚未生成，请在 assets/images 下运行：python generate_patch_manifests.py'
+            );
+          });
       }
 
       function clearHeatmapOverlays() {
@@ -612,14 +1046,26 @@
         var img = document.getElementById('patch_modal_img');
         var tx = document.getElementById('patch_modal_text');
         img.src = resolveUrl(patch_image_path);
-        tx.textContent = description || '';
-        tx.className = 'small text-muted mb-0';
+        img.className = 'd-inline-block rounded';
+        if (description) {
+          tx.textContent = description;
+          tx.className = 'small text-muted mt-3 mb-0 pt-2 border-top';
+          tx.style.borderColor = 'rgba(22, 93, 255, 0.12)';
+          tx.classList.remove('d-none');
+        } else {
+          tx.textContent = '';
+          tx.className = 'small text-muted mt-0 mb-0 d-none';
+        }
+        syncPatchModalLog();
         var modalEl = document.getElementById('patch_modal');
         if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
           bootstrap.Modal.getOrCreateInstance(modalEl).show();
         } else if (window.jQuery && jQuery.fn.modal) {
           jQuery(modalEl).modal('show');
         }
+        window.setTimeout(function () {
+          syncPatchModalLog();
+        }, 100);
       }
 
       /** 更新总进度条、分步条与当前步骤文案 */
@@ -648,7 +1094,7 @@
             setCurrentStepText('粗糙热力图叠加');
             break;
           case 'highlight_patch':
-            highlightPatch(item.coordinates || {});
+            /* 扫描框暂不展示，仅输出关联日志 */
             if (item.log_message) appendLog(item.log_message);
             break;
           case 'show_patch_modal':
@@ -672,6 +1118,7 @@
           running = false;
           document.getElementById('start_btn').disabled = false;
           setCurrentStepText('分析完成');
+          showPatchBrowseControls(true);
           document.getElementById('analysis_complete_overlay').style.display = 'flex';
           document.getElementById('analysis_complete_overlay').setAttribute('aria-hidden', 'false');
           return;
@@ -686,6 +1133,32 @@
         }, delay);
       }
 
+      /** 与 navbar「折叠侧边栏」一致：body 增加 sidebar-icon-only，主区变宽，便于看切片与日志 */
+      function ensureSidebarIconOnlyForAnalysis() {
+        if (!document.body.classList.contains('sidebar-icon-only')) {
+          document.body.classList.add('sidebar-icon-only');
+        }
+      }
+
+      /** 分析进行中：放大阅片区、压缩页眉与日志高度，便于与日志同屏浏览 */
+      function setAnalysisRunningUi(on) {
+        if (on) {
+          document.body.classList.add('pv-analysis-running');
+          window.requestAnimationFrame(function () {
+            var sv = document.getElementById('slice_viewer');
+            if (sv) {
+              try {
+                sv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              } catch (e) {
+                sv.scrollIntoView(true);
+              }
+            }
+          });
+        } else {
+          document.body.classList.remove('pv-analysis-running');
+        }
+      }
+
       /** 通用流程执行入口：按顺序执行步骤数组，同步动画与日志 */
       function executeScript(script, clearLog) {
         if (!Array.isArray(script) || !script.length) {
@@ -698,6 +1171,8 @@
         running = true;
         paused = false;
         document.getElementById('start_btn').disabled = true;
+        ensureSidebarIconOnlyForAnalysis();
+        setAnalysisRunningUi(true);
         appendLog('开始执行分析流程。');
         scheduleNext();
       }
@@ -733,10 +1208,14 @@
         document.getElementById('start_btn').disabled = false;
         if (clearLog) {
           document.getElementById('ai_log_container').innerHTML = '<p class="small text-muted mb-0">等待分析启动...</p>';
+          var mb = document.getElementById('ai_log_modal_body');
+          if (mb) mb.innerHTML = '';
         }
         document.getElementById('analysis_complete_overlay').style.display = 'none';
         document.getElementById('analysis_complete_overlay').setAttribute('aria-hidden', 'true');
         applyHeatmapOpacity();
+        setAnalysisRunningUi(false);
+        showPatchBrowseControls(false);
       }
 
       /** 异步加载病例配置 JSON */
@@ -752,7 +1231,22 @@
               case_id: 'custom',
               case_name: '本地上传病例' + (slideHint ? '（编号 ' + slideHint + '）' : ''),
               slide_id: slideHint || '—',
-              assets: { stitch_image: 'assets/images/117176_stitch.png', initial_heatmap: '', final_heatmap: '', patches_folder: '' },
+              assets: {
+                stitch_image: 'assets/images/117176_stitch.png',
+                initial_heatmap: '',
+                final_heatmap: '',
+                patches_folder: 'assets/images/patches/'
+              },
+              high_risk_patches: [
+                '1_43297_12992.jpg',
+                '2_59681_17088.jpg',
+                '3_67873_4800.jpg',
+                '4_55585_8896.jpg',
+                '5_51489_704.jpg',
+                '6_63777_25280.jpg'
+              ],
+              all_patches_folder: 'assets/images/all_patches/',
+              all_patches_manifest: 'assets/images/all_patches/manifest.json',
               analysis_script: 'assets/data/analysis_npc.json'
             };
           }
@@ -846,6 +1340,8 @@
         showPatchModal: showPatchModal,
         updateProgress: updateProgress,
         executeScript: executeScript,
+        openPatchGalleryHighRisk: openPatchGalleryHighRisk,
+        openPatchGalleryAll: openPatchGalleryAll,
         getCaseConfig: function () { return caseConfig; },
         getScriptSteps: function () { return scriptSteps; },
         getLastDiagnosis: function () { return lastDiagnosisConclusion; }
@@ -854,6 +1350,28 @@
       document.getElementById('heatmap_opacity').addEventListener('input', applyHeatmapOpacity);
 
       window.addEventListener('resize', scheduleHighlightResize);
+
+      (function bindAiLogExpand() {
+        var btn = document.getElementById('ai_log_expand_btn');
+        var area = document.getElementById('ai_log_click_area');
+        if (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            openAiLogModal();
+          });
+        }
+        if (area) {
+          area.addEventListener('click', function () {
+            openAiLogModal();
+          });
+          area.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openAiLogModal();
+            }
+          });
+        }
+      })();
 
       document.getElementById('start_btn').addEventListener('click', function () {
         document.getElementById('analysis_complete_overlay').style.display = 'none';
@@ -879,6 +1397,36 @@
         var ov = document.getElementById('analysis_complete_overlay');
         ov.style.display = 'none';
         ov.setAttribute('aria-hidden', 'true');
+      });
+
+      document.querySelectorAll('.btn-pv-gallery-high').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openPatchGalleryHighRisk();
+        });
+      });
+      document.querySelectorAll('.btn-pv-gallery-all').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openPatchGalleryAll();
+        });
+      });
+
+      var pgPrev = document.getElementById('patch_gallery_prev');
+      var pgNext = document.getElementById('patch_gallery_next');
+      if (pgPrev) pgPrev.addEventListener('click', function () { stepPatchGallery(-1); });
+      if (pgNext) pgNext.addEventListener('click', function () { stepPatchGallery(1); });
+
+      document.addEventListener('keydown', function (e) {
+        var gm = document.getElementById('patch_gallery_modal');
+        if (!gm || !gm.classList.contains('show')) return;
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          stepPatchGallery(-1);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          stepPatchGallery(1);
+        }
       });
 
       loadCaseAndScript();

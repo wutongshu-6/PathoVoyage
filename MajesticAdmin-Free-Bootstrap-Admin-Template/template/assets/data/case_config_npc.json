@@ -8,6 +8,16 @@
     "final_heatmap": "assets/images/117176_final_heatmap.png",
     "patches_folder": "assets/images/patches/"
   },
+  "high_risk_patches": [
+    "1_43297_12992.jpg",
+    "2_59681_17088.jpg",
+    "3_67873_4800.jpg",
+    "4_55585_8896.jpg",
+    "5_51489_704.jpg",
+    "6_63777_25280.jpg"
+  ],
+  "all_patches_folder": "assets/images/all_patches/",
+  "all_patches_manifest": "assets/images/all_patches/manifest.json",
   "patch_list": [
     {
       "patch_id": "1_43297_12992.jpg",

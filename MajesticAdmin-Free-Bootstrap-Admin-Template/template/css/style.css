@@ -22849,6 +22849,31 @@ dl li {
   border-radius: 100%;
 }
 
+/* PathoVoyage：病理医生占位头像（SVG 圆框 + 内实色，避免空 span 在 flex 下不显示） */
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile .nav-link.dropdown-toggle {
+  display: inline-flex !important;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile .nav-link .pv-nav-avatar-wrap {
+  display: inline-flex !important;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  line-height: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+  vertical-align: middle;
+}
+
+.navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile .nav-link .pv-nav-avatar-wrap svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile .nav-link .nav-profile-name {
   margin-left: .5rem;
   margin-right: .5rem;

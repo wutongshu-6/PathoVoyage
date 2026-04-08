@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var STORAGE_TEAM = 'pathovoyage_nav_team_read';
-  var STORAGE_REVIEW = 'pathovoyage_nav_review_read';
+  var STORAGE_TEAM = 'yinghang_nav_team_read';
+  var STORAGE_REVIEW = 'yinghang_nav_review_read';
 
   function clearBadge(span, storageKey) {
     if (!span) return;

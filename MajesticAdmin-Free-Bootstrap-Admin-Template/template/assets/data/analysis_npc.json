@@ -1,141 +1,100 @@
 [
-  {
-    "type": "log",
-    "delay": 500,
-    "message": "AI: 鼻咽非角化性癌辅助诊断任务已加载，切片117176已就绪。"
-  },
-  {
-    "type": "log",
-    "delay": 1000,
-    "message": "AI: 任务启动，正在执行全切片有效组织区域提取..."
-  },
-  {
-    "type": "step_update",
-    "delay": 1500,
-    "step": "有效组织提取",
-    "progress": 20,
-    "log_message": "AI: 有效组织区域提取完成，排除空白背景与无效区域。"
-  },
+  { "type": "log", "delay": 500, "message": "AI: 咽喉癌病例已加载，准备执行两阶段分析（粗筛→细筛）。" },
+  { "type": "log", "delay": 1200, "message": "AI: 粗筛启动，正在进行有效组织提取并过滤背景噪声..." },
+  { "type": "log", "delay": 1400, "message": "AI 思考: 先稳定识别可分析组织边界，避免背景区域干扰。", "step": "有效组织提取", "progress": 10, "progress_duration_ms": 1800 },
+  { "type": "step_update", "delay": 1800, "step": "有效组织提取", "progress": 20, "progress_duration_ms": 2200, "log_message": "AI: 有效组织区域提取完成，获得可分析组织区域。" },
+  { "type": "log", "delay": 1300, "message": "AI: 粗筛阶段继续，执行全局特征提取与候选区域召回...", "step": "全局特征提取", "progress": 28, "progress_duration_ms": 1700 },
+  { "type": "log", "delay": 1400, "message": "AI 思考: 正在汇总多尺度纹理和结构特征，逐步提升候选召回。", "step": "全局特征提取", "progress": 34, "progress_duration_ms": 1900 },
+  { "type": "step_update", "delay": 1900, "step": "全局特征提取", "progress": 40, "progress_duration_ms": 2200, "log_message": "AI: 已完成粗粒度特征编码，候选可疑区域数量提升至 10 处。" },
+  { "type": "log", "delay": 1200, "message": "AI: 正在进行粗略热力值分析，粗筛热力图将从左到右逐步叠加。", "step": "热力值计算", "progress": 50, "progress_duration_ms": 1500 },
   {
     "type": "show_initial_heatmap",
-    "delay": 1500,
+    "delay": 900,
     "image_path": "assets/images/117176_retrieval_heatmap.png",
     "heatmap_id": "initial_heatmap",
     "opacity": 0.5,
-    "log_message": "AI: 正在执行全局快速检索，初步定位高风险可疑区域，粗糙热力图已生成。"
+    "reveal_duration_ms": 9600,
+    "reveal_from_progress": 50,
+    "reveal_to_progress": 66,
+    "log_message": "AI: 粗筛热力图叠加中，正在完成 patch 分割与疑似区域聚类。"
   },
-  {
-    "type": "step_update",
-    "delay": 2000,
-    "step": "全局特征提取",
-    "progress": 40,
-    "log_message": "AI: 全局特征提取完成，初步识别6处高可疑病灶区域，按风险等级排序。"
-  },
-  {
-    "type": "log",
-    "delay": 1500,
-    "message": "AI 思考: 初步检索发现细胞异型性最显著的高风险区域，我将首先对该区域进行高倍镜观察。"
-  },
-  {
-    "type": "highlight_patch",
-    "delay": 1000,
-    "patch_id": "1_43297_12992.jpg",
-    "coordinates": {"top": "12%", "left": "43%"},
-    "log_message": "AI 动作: 导航至最高风险区域 1_43297_12992，进行高倍镜聚焦观察。"
-  },
-  {
-    "type": "show_patch_modal",
-    "delay": 1500,
-    "patch_id": "1_43297_12992.jpg",
-    "patch_image_path": "assets/images/patches/1_43297_12992.jpg",
-    "log_message": "AI 观察: 镜下可见肿瘤组织边界不规则，细胞呈明显异型性，核大深染，伴出血及淋巴细胞浸润，符合恶性肿瘤形态学特征。"
-  },
-  {
-    "type": "log",
-    "delay": 2500,
-    "message": "AI 思考: 已确认核心恶性病灶，接下来将对次高风险区域进行观察，评估肿瘤浸润范围。"
-  },
-  {
-    "type": "highlight_patch",
-    "delay": 1500,
-    "patch_id": "2_59681_17088.jpg",
-    "coordinates": {"top": "17%", "left": "59%"},
-    "log_message": "AI 动作: 导航至次高风险区域 2_59681_17088，观察肿瘤浸润情况。"
-  },
-  {
-    "type": "show_patch_modal",
-    "delay": 1500,
-    "patch_id": "2_59681_17088.jpg",
-    "patch_image_path": "assets/images/patches/2_59681_17088.jpg",
-    "log_message": "AI 观察: 镜下可见大量炎症细胞浸润，伴局部出血，肿瘤细胞呈浸润性生长，破坏周围正常组织结构。"
-  },
-  {
-    "type": "log",
-    "delay": 2500,
-    "message": "AI 思考: 已确认肿瘤浸润范围，接下来对其余可疑区域进行排查，排除多灶性病变。"
-  },
-  {
-    "type": "highlight_patch",
-    "delay": 1500,
-    "patch_id": "3_67873_4800.jpg",
-    "coordinates": {"top": "4%", "left": "67%"},
-    "log_message": "AI 动作: 导航至区域 3_67873_4800，排查可疑病变。"
-  },
-  {
-    "type": "show_patch_modal",
-    "delay": 1500,
-    "patch_id": "3_67873_4800.jpg",
-    "patch_image_path": "assets/images/patches/3_67873_4800.jpg",
-    "log_message": "AI 观察: 镜下可见组织形态规则，细胞形态均一，未见明显异型性，为正常黏膜组织，排除恶性病变。"
-  },
-  {
-    "type": "step_update",
-    "delay": 2000,
-    "step": "可疑区域定位",
-    "progress": 60,
-    "log_message": "AI: 全片可疑区域排查完成，已锁定2处核心恶性病灶，排除其余良性区域。"
-  },
-  {
-    "type": "log",
-    "delay": 1500,
-    "message": "AI 思考: 已完成全片多尺度观察，正在基于病灶特征进行综合诊断，生成最终诊断热力图。"
-  },
-  {
-    "type": "step_update",
-    "delay": 1500,
-    "step": "热力值计算",
-    "progress": 80,
-    "log_message": "AI: 病灶热力值计算完成，基于恶性风险等级完成区域分级。"
-  },
-  {
-    "type": "log",
-    "delay": 1000,
-    "message": "AI: 正在执行热力图图层渲染与对齐..."
-  },
-  {
-    "type": "step_update",
-    "delay": 1500,
-    "step": "图层渲染对齐",
-    "progress": 100,
-    "log_message": "AI: 热力图图层渲染完成。"
-  },
+  { "type": "log", "delay": 1800, "message": "AI 思考: 热力图左侧已完成叠加，正在推进至中部区域。", "step": "热力值计算", "progress": 54, "progress_duration_ms": 1500 },
+  { "type": "log", "delay": 1800, "message": "AI 思考: 热力值分析进入中段，候选区域权重持续更新。", "step": "热力值计算", "progress": 58, "progress_duration_ms": 1500 },
+  { "type": "log", "delay": 1800, "message": "AI 思考: 热力图叠加继续向右侧推进，疑似区域分割逐步收敛。", "step": "热力值计算", "progress": 62, "progress_duration_ms": 1500 },
+  { "type": "highlight_patch", "delay": 900, "patch_id": "15488_9761.jpg", "log_message": "AI 动作: 粗筛阶段抽取代表性高风险 patch 15488_9761 做快速复核。" },
+  { "type": "show_patch_modal", "delay": 1200, "patch_id": "15488_9761.jpg", "patch_image_path": "assets/images/patches/15488_9761.jpg", "log_message": "AI 粗筛观察: 可见细胞密集且形态紊乱，核质比偏高，提示该区域在粗筛中应提升优先级。"},
+  { "type": "highlight_patch", "delay": 850, "patch_id": "31009_12992.jpg", "log_message": "AI 动作: 粗筛阶段复核次高风险 patch 31009_12992，确认其进入细筛队列。" },
+  { "type": "show_patch_modal", "delay": 1150, "patch_id": "31009_12992.jpg", "patch_image_path": "assets/images/patches/31009_12992.jpg", "log_message": "AI 粗筛观察: 左上异常区细胞异型性明显，伴坏死征象，判定为细筛重点区域。"},
+  { "type": "highlight_patch", "delay": 780, "patch_id": "43297_12992.jpg", "log_message": "AI 动作: 粗筛快速复核 patch 43297_12992，判断炎症/出血成分占比。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "43297_12992.jpg", "patch_image_path": "assets/images/patches/43297_12992.jpg", "log_message": "AI 粗筛观察: 可见淤血及出血灶并伴炎性浸润，纳入细筛做病变性质分层。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "43297_704.jpg", "log_message": "AI 动作: 粗筛复核 patch 43297_704，评估是否为低风险背景区域。" },
+  { "type": "show_patch_modal", "delay": 960, "patch_id": "43297_704.jpg", "patch_image_path": "assets/images/patches/43297_704.jpg", "log_message": "AI 粗筛观察: 结构相对完整，倾向低风险，但保留至细筛复核。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "43297_4800.jpg", "log_message": "AI 动作: 粗筛复核 patch 43297_4800，识别复杂病理混合征象。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "43297_4800.jpg", "patch_image_path": "assets/images/patches/43297_4800.jpg", "log_message": "AI 粗筛观察: 炎症、坏死与出血并存，复杂度高，列为细筛重点。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "51489_704.jpg", "log_message": "AI 动作: 粗筛复核 patch 51489_704，快速确认恶性倾向。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "51489_704.jpg", "patch_image_path": "assets/images/patches/51489_704.jpg", "log_message": "AI 粗筛观察: 可见明显恶性形态特征，优先级上调。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "55585_8896.jpg", "log_message": "AI 动作: 粗筛复核 patch 55585_8896，确认血栓相关病理信号。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "55585_8896.jpg", "patch_image_path": "assets/images/patches/55585_8896.jpg", "log_message": "AI 粗筛观察: 管腔闭塞与纤维蛋白信号清晰，纳入细筛对照组。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "59681_17088.jpg", "log_message": "AI 动作: 粗筛复核 patch 59681_17088，评估急性炎症强度。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "59681_17088.jpg", "patch_image_path": "assets/images/patches/59681_17088.jpg", "log_message": "AI 粗筛观察: 炎细胞浸润显著并伴出血，纳入细筛鉴别。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "63777_25280.jpg", "log_message": "AI 动作: 粗筛复核 patch 63777_25280，判断间叶样病变可能。" },
+  { "type": "show_patch_modal", "delay": 980, "patch_id": "63777_25280.jpg", "patch_image_path": "assets/images/patches/63777_25280.jpg", "log_message": "AI 粗筛观察: 纤维与脂肪组织混合并见增生灶，列入高复杂度区域。"},
+  { "type": "highlight_patch", "delay": 760, "patch_id": "67873_4800.jpg", "log_message": "AI 动作: 粗筛复核 patch 67873_4800，确认低风险小叶结构。" },
+  { "type": "show_patch_modal", "delay": 960, "patch_id": "67873_4800.jpg", "patch_image_path": "assets/images/patches/67873_4800.jpg", "log_message": "AI 粗筛观察: 小叶结构清晰、细胞均一，作为低风险参照灶。"},
+  { "type": "step_update", "delay": 2200, "step": "可疑区域定位", "progress": 68, "progress_duration_ms": 3600, "log_message": "AI: 粗筛完成，已输出 10 个可疑 patch，准备进入细筛复核。" },
+  { "type": "log", "delay": 1100, "message": "AI: 细筛阶段启动。将逐个复核可疑 patch，并同步生成对应小热力图。", "step": "热力值计算", "progress": 69, "progress_duration_ms": 1200 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "15488_9761.jpg", "log_message": "AI 动作: 进入 patch 15488_9761，进行细粒度形态学评估。" },
+  { "type": "show_patch_modal", "delay": 1250, "patch_id": "15488_9761.jpg", "patch_image_path": "assets/images/patches/15488_9761.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/15488_9761_zoomed.png", "log_message": "AI 观察: 该区域可见大量高度提示乳腺转移癌的细胞，细胞形态不规则、核质比增高、核仁明显，且排列密集紊乱，均为恶性肿瘤典型表现。图像中央还能识别边界清晰的淋巴结结构，滤泡可见，但癌细胞已进入淋巴结内，提示转移过程参与。综合形态学证据，该 patch 与乳腺转移癌高度相符。"},
+  { "type": "log", "delay": 760, "message": "AI 思考: 该灶已满足“高恶性+淋巴结受累”双重条件，细筛权重上调。", "step": "热力值计算", "progress": 69.8, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "31009_12992.jpg", "log_message": "AI 动作: 切换至 patch 31009_12992，评估肿瘤细胞异型性与坏死特征。" },
+  { "type": "show_patch_modal", "delay": 1250, "patch_id": "31009_12992.jpg", "patch_image_path": "assets/images/patches/31009_12992.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/31009_12992_zoomed.png", "log_message": "AI 观察: 左上象限见特征明确异常区，细胞核大小与形态高度不规则，染色质粗糙分布不均，核仁明显；细胞质偏少且嗜碱，排列密集并呈浸润趋势，同时可见坏死灶及周围血管反应，符合高度恶性肿瘤病理特征。"},
+  { "type": "log", "delay": 780, "message": "AI 思考: 该灶形态学恶性证据充分，需与其它可疑灶联合评估总体侵袭性。", "step": "热力值计算", "progress": 71, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "43297_12992.jpg", "log_message": "AI 动作: 复核 patch 43297_12992，分析炎症与出血影响。" },
+  { "type": "show_patch_modal", "delay": 1120, "patch_id": "43297_12992.jpg", "patch_image_path": "assets/images/patches/43297_12992.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/43297_12992_zoomed.png", "log_message": "AI 观察: 组织呈明显淤血状态，伴炎性细胞浸润；可见散在出血区（血管外红细胞），提示血管破裂或损伤。水肿与出血共同导致组织结构扭曲，正常形态辨识受限。"},
+  { "type": "log", "delay": 600, "message": "AI 思考: 该区域主要呈炎症-出血模式，恶性证据有限。", "step": "热力值计算", "progress": 72, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "43297_704.jpg", "log_message": "AI 动作: 复核 patch 43297_704，判定肺泡样结构完整性。" },
+  { "type": "show_patch_modal", "delay": 1080, "patch_id": "43297_704.jpg", "patch_image_path": "assets/images/patches/43297_704.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/43297_704_zoomed.png", "log_message": "AI 观察: 图像可见肺泡样细点状结构，分布相对规律，组织整体框架尚完整。该区域主要提示肺泡内血液相关表现，暂未见足够恶性异型证据，倾向低风险背景灶。"},
+  { "type": "log", "delay": 580, "message": "AI 思考: 该灶暂定低风险，继续下一个 patch。", "step": "热力值计算", "progress": 73, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "43297_4800.jpg", "log_message": "AI 动作: 复核 patch 43297_4800，评估坏死与浸润复合征象。" },
+  { "type": "show_patch_modal", "delay": 1160, "patch_id": "43297_4800.jpg", "patch_image_path": "assets/images/patches/43297_4800.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/43297_4800_zoomed.png", "log_message": "AI 观察: 该 patch 结构复杂，难直接归属单一器官类型；可见小圆形细胞成分浸润、坏死区及周围炎性反应，并伴出血征象。整体病理改变涉及炎症-坏死-出血复合过程，存在肿瘤性病变可能，需后续证据进一步确认。"},
+  { "type": "log", "delay": 580, "message": "AI 思考: 该灶存在中等风险特征，暂列复核队列。", "step": "热力值计算", "progress": 74, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "51489_704.jpg", "log_message": "AI 动作: 复核 patch 51489_704，关注鳞癌相关细胞学表现。" },
+  { "type": "show_patch_modal", "delay": 1160, "patch_id": "51489_704.jpg", "patch_image_path": "assets/images/patches/51489_704.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/51489_704_zoomed.png", "log_message": "AI 观察: 可见典型恶性细胞异型、核深染、核质比增高，细胞呈不规则簇状/片层排列，符合非角化型鳞状细胞癌形态。与此同时可见分化较好的软骨样良性成分，形成良恶性并存的对照病理图像。"},
+  { "type": "log", "delay": 600, "message": "AI 思考: 该区域恶性提示增强，更新风险排序。", "step": "热力值计算", "progress": 75, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "55585_8896.jpg", "log_message": "AI 动作: 复核 patch 55585_8896，分析血栓相关病理迹象。" },
+  { "type": "show_patch_modal", "delay": 1120, "patch_id": "55585_8896.jpg", "patch_image_path": "assets/images/patches/55585_8896.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/55585_8896_zoomed.png", "log_message": "AI 观察: 该区域可见肺动脉分支样管腔堵塞，局部呈完全闭塞征象；并有较多纤维蛋白网状沉积，支持血栓形成。结合通气背景，可提示肺栓塞相关病理过程，且存在血栓脱落迁移风险。"},
+  { "type": "log", "delay": 580, "message": "AI 思考: 病理改变明确，但与上皮恶性病变路径不同。", "step": "热力值计算", "progress": 76, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "59681_17088.jpg", "log_message": "AI 动作: 复核 patch 59681_17088，评估急性炎症强度与出血影响。" },
+  { "type": "show_patch_modal", "delay": 1160, "patch_id": "59681_17088.jpg", "patch_image_path": "assets/images/patches/59681_17088.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/59681_17088_zoomed.png", "log_message": "AI 观察: 扁桃体样组织内炎性细胞浸润显著，以中性粒细胞为主，并侵及淋巴滤泡导致结构受损；同时伴明显出血及局灶脓液聚集趋势。整体形态与急性扁桃体炎重症/进展期表现一致。"},
+  { "type": "log", "delay": 580, "message": "AI 思考: 该区域以炎症反应为主，纳入鉴别集合。", "step": "热力值计算", "progress": 77, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "63777_25280.jpg", "log_message": "AI 动作: 复核 patch 63777_25280，观察结节与纤维脂肪混合成分。" },
+  { "type": "show_patch_modal", "delay": 1160, "patch_id": "63777_25280.jpg", "patch_image_path": "assets/images/patches/63777_25280.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/63777_25280_zoomed.png", "log_message": "AI 观察: 右中部可见结节样病灶，结节内纤维组织丰富并伴脂肪组织浸润，同时中央见异常增生灶。该类“纤维+脂肪+增生”并存模式提示间叶来源肿瘤可能，需进一步检查以确认是否脂肪肉瘤。"},
+  { "type": "log", "delay": 580, "message": "AI 思考: 该灶复杂度高，提升细筛权重。", "step": "热力值计算", "progress": 78, "progress_duration_ms": 900 },
+
+  { "type": "highlight_patch", "delay": 700, "patch_id": "67873_4800.jpg", "log_message": "AI 动作: 复核 patch 67873_4800，评估小叶结构完整性。" },
+  { "type": "show_patch_modal", "delay": 1080, "patch_id": "67873_4800.jpg", "patch_image_path": "assets/images/patches/67873_4800.jpg", "patch_heatmap_path": "assets/images/patch_heatmaps/67873_4800_zoomed.png", "log_message": "AI 观察: 可见边界清晰的小叶结构，周围脂肪组织分布均匀，小叶内部细胞形态较一致，组织结构保持完整。该区域更接近低风险/相对正常组织表现。"},
+  { "type": "step_update", "delay": 1100, "step": "热力值计算", "progress": 80, "progress_duration_ms": 1500, "log_message": "AI: 10 个 patch 细筛完成，小热力图已随流程生成。"},
+
+  { "type": "log", "delay": 900, "message": "AI: 正在执行图层渲染对齐，融合粗筛与细筛结果..." },
+  { "type": "step_update", "delay": 1200, "step": "图层渲染对齐", "progress": 100, "progress_duration_ms": 1500, "log_message": "AI: 图层渲染完成，准备输出细化概览热力图。" },
   {
     "type": "show_final_heatmap",
-    "delay": 2000,
+    "delay": 1200,
     "initial_heatmap_id": "initial_heatmap",
     "final_heatmap_path": "assets/images/117176_final_heatmap.png",
     "heatmap_id": "final_heatmap",
-    "opacity": 0.6,
-    "log_message": "AI: 粗糙热力图已替换为最终精细诊断热力图，精准标记不同风险等级病灶区域。"
+    "opacity": 0.62,
+    "log_message": "AI: 已叠加细化概览热力图，完成最终风险区标定。"
   },
-  {
-    "type": "log",
-    "delay": 1500,
-    "message": "AI 最终诊断结论: 综合全片多尺度观察结果，镜下可见异型肿瘤细胞呈浸润性生长，伴出血、炎症浸润，符合鼻咽非角化性癌形态学特征。"
-  },
-  {
-    "type": "log",
-    "delay": 1000,
-    "message": "AI: 分析流程全部完成，可点击「生成报告」查看完整诊断报告。"
-  }
+  { "type": "log", "delay": 1200, "message": "AI 最终诊断结论: 综合粗筛与细筛结果，当前病例显示多处高风险异型增生灶，伴炎症/坏死复合病理背景，建议结合免疫组化与临床信息进一步确证。"},
+  { "type": "log", "delay": 900, "message": "AI: 分析流程全部完成，可点击「生成报告」查看完整诊断报告。"}
 ]

@@ -1,41 +1,78 @@
 {
   "case_id": "npc",
-  "case_name": "鼻咽非角化性癌标准病例",
-  "slide_id": "117176",
+  "case_name": "咽喉癌标准测试病例",
+  "slide_id": "",
   "assets": {
     "stitch_image": "assets/images/117176_stitch.png",
     "initial_heatmap": "assets/images/117176_retrieval_heatmap.png",
     "final_heatmap": "assets/images/117176_final_heatmap.png",
-    "patches_folder": "assets/images/patches/"
+    "patches_folder": "assets/images/patches/",
+    "patch_heatmaps_folder": "assets/images/patch_heatmaps/"
   },
   "high_risk_patches": [
-    "1_43297_12992.jpg",
-    "2_59681_17088.jpg",
-    "3_67873_4800.jpg",
-    "4_55585_8896.jpg",
-    "5_51489_704.jpg",
-    "6_63777_25280.jpg"
+    "15488_9761.jpg",
+    "31009_12992.jpg",
+    "43297_12992.jpg",
+    "43297_704.jpg",
+    "43297_4800.jpg",
+    "51489_704.jpg",
+    "55585_8896.jpg",
+    "59681_17088.jpg",
+    "63777_25280.jpg",
+    "67873_4800.jpg"
   ],
   "all_patches_folder": "assets/images/all_patches/",
   "all_patches_manifest": "assets/images/all_patches/manifest.json",
   "patch_list": [
     {
-      "patch_id": "1_43297_12992.jpg",
-      "patch_name": "最高风险病灶",
-      "coordinates": {"top": "12%", "left": "43%"},
-      "description": "镜下可见肿瘤组织边界不规则，细胞呈明显异型性，核大深染，伴出血及淋巴细胞浸润，符合恶性肿瘤形态学特征。"
+      "patch_id": "15488_9761.jpg",
+      "patch_name": "高风险病灶 A",
+      "description": "细胞异型性明显，核质比增高，存在淋巴结受累提示。"
     },
     {
-      "patch_id": "2_59681_17088.jpg",
-      "patch_name": "次高风险病灶",
-      "coordinates": {"top": "17%", "left": "59%"},
-      "description": "镜下可见大量炎症细胞浸润，伴局部出血，肿瘤细胞呈浸润性生长，破坏周围正常组织结构。"
+      "patch_id": "31009_12992.jpg",
+      "patch_name": "高风险病灶 B",
+      "description": "细胞核高度异型，伴坏死与血管反应，提示高度恶性病变。"
     },
     {
-      "patch_id": "3_67873_4800.jpg",
-      "patch_name": "可疑排查区域",
-      "coordinates": {"top": "4%", "left": "67%"},
-      "description": "镜下可见组织形态规则，细胞形态均一，未见明显异型性，为正常黏膜组织，排除恶性病变。"
+      "patch_id": "43297_12992.jpg",
+      "patch_name": "炎症-出血复合区",
+      "description": "可见淤血、炎症浸润及出血，组织结构受损。"
+    },
+    {
+      "patch_id": "43297_704.jpg",
+      "patch_name": "肺泡样组织区",
+      "description": "肺泡样结构可见，整体组织结构相对完整。"
+    },
+    {
+      "patch_id": "43297_4800.jpg",
+      "patch_name": "复杂病理改变区",
+      "description": "炎症、坏死与出血并存，需结合更多证据判定性质。"
+    },
+    {
+      "patch_id": "51489_704.jpg",
+      "patch_name": "恶性征象显著区",
+      "description": "细胞异型性突出，呈恶性肿瘤形态学特征。"
+    },
+    {
+      "patch_id": "55585_8896.jpg",
+      "patch_name": "血栓样病理区",
+      "description": "血管闭塞与纤维蛋白网状分布，提示血栓相关病变。"
+    },
+    {
+      "patch_id": "59681_17088.jpg",
+      "patch_name": "重度炎症区",
+      "description": "炎细胞浸润显著，伴出血与脓肿形成倾向。"
+    },
+    {
+      "patch_id": "63777_25280.jpg",
+      "patch_name": "纤维脂肪混合区",
+      "description": "结节内见纤维与脂肪组织，伴肿瘤性增生迹象。"
+    },
+    {
+      "patch_id": "67873_4800.jpg",
+      "patch_name": "低风险小叶结构区",
+      "description": "小叶结构边界清晰，细胞形态较均一。"
     }
   ],
   "analysis_script": "assets/data/analysis_npc.json"

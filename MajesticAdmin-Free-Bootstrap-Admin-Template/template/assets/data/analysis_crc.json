@@ -17,14 +17,6 @@
     "log_message": "AI: 有效组织区域提取完成，排除空白背景与无效区域。"
   },
   {
-    "type": "show_initial_heatmap",
-    "delay": 1500,
-    "image_path": "assets/images/crc_retrieval_heatmap.png",
-    "heatmap_id": "initial_heatmap",
-    "opacity": 0.5,
-    "log_message": "AI: 正在执行全局快速检索，初步定位高风险可疑区域，粗糙热力图已生成。"
-  },
-  {
     "type": "step_update",
     "delay": 2000,
     "step": "全局特征提取",
@@ -98,11 +90,22 @@
   {
     "type": "log",
     "delay": 1500,
-    "message": "AI 思考: 已完成全片多尺度观察，正在基于病灶特征进行综合诊断，生成最终诊断热力图。"
+    "message": "AI 思考: 已完成全片多尺度观察，正在基于病灶特征计算热力值并叠加粗糙热力图。"
+  },
+  {
+    "type": "show_initial_heatmap",
+    "delay": 1000,
+    "image_path": "assets/images/crc_retrieval_heatmap.png",
+    "heatmap_id": "initial_heatmap",
+    "opacity": 0.5,
+    "reveal_duration_ms": 4200,
+    "reveal_from_progress": 60,
+    "reveal_to_progress": 78,
+    "log_message": "AI: 正在执行热力值计算，粗糙热力图从左至右逐列叠加。"
   },
   {
     "type": "step_update",
-    "delay": 1500,
+    "delay": 4200,
     "step": "热力值计算",
     "progress": 80,
     "log_message": "AI: 病灶热力值计算完成，基于恶性风险等级完成区域分级。"

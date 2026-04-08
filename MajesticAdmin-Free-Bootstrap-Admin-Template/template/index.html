@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>PathoVoyage 病理AI辅助诊断平台</title>
+  <title>影航多尺度动态探索型AI与可解释诊断平台</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
@@ -25,8 +25,8 @@
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="navbar-brand-wrapper d-flex justify-content-center">
         <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">  
-          <a class="navbar-brand brand-logo" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
-          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/pathovoyage-logo.png" alt="logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <a class="navbar-brand brand-logo" href="index.html"><img src="images/影航AI病理智能体logo设计.png" alt="影航logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
+          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/影航AI病理智能体logo设计.png" alt="影航logo" style="width: auto; height: auto; max-height: 42px; object-fit: contain;"/></a>
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-sort-variant"></span>
           </button>
@@ -203,7 +203,7 @@
               <div class="d-flex justify-content-between flex-wrap">
                 <div class="d-flex align-items-end flex-wrap">
                   <div class="me-md-3 me-xl-5">
-                    <h2>欢迎使用 PathoVoyage 病理全切片AI分析平台</h2>
+                    <h2>欢迎使用 影航多尺度动态探索型AI与可解释诊断平台</h2>
                     <p class="mb-md-0">可解释AI辅助诊断 · 全流程可视化 · 标准化报告生成</p>
                     <p class="text-muted small mb-0 mt-2">本平台AI分析结果仅为辅助诊断参考，最终诊断需由执业病理医生人工复核确认。</p>
                   </div>
@@ -316,7 +316,7 @@
                 <div class="card-body">
                   <p class="card-title">系统公告</p>
                   <ul class="list-group">
-                    <li class="list-group-item">【通知】PathoVoyage v1.1.0 已支持批量任务与报告导出优化，建议科室在闲时完成浏览器缓存清理后使用。</li>
+                    <li class="list-group-item">【通知】影航 v1.1.0 已支持批量任务与报告导出优化，建议科室在闲时完成浏览器缓存清理后使用。</li>
                     <li class="list-group-item">【培训】新入职病理医师可于「系统使用指南」页查看切片上传—分析—复核全流程说明。</li>
                     <li class="list-group-item">【合规】请严格遵循院内病理诊断规范，AI 输出不得作为唯一诊断依据。</li>
                   </ul>
@@ -330,7 +330,7 @@
         <footer class="footer">
           <div class="d-sm-flex justify-content-between align-items-center flex-wrap pt-3 border-top">
             <p class="text-center text-sm-left text-muted small mb-2 mb-sm-0 pr-sm-3">
-              <span class="font-weight-medium text-primary">PathoVoyage</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">病理全切片 AI 分析平台</span>
+              <span class="font-weight-medium text-primary">影航</span><span class="d-none d-sm-inline"> · </span><span class="d-block d-sm-inline mt-1 mt-sm-0">多尺度动态探索型AI与可解释诊断平台</span>
             </p>
             <p class="text-center text-sm-right text-muted small mb-0">数字病理 · AI辅助诊断</p>
           </div>
@@ -382,7 +382,7 @@
       if (exportBtn) {
         exportBtn.addEventListener('click', function () {
           var now = new Date().toLocaleString('zh-CN', { hour12: false });
-          var csv = '\uFEFFPathoVoyage 首页工作台摘要\n';
+          var csv = '\uFEFF影航 首页工作台摘要\n';
           csv += '导出时间,' + now + '\n';
           csv += '页面定位,核心功能入口 · 我的待办 · 系统公告\n';
           csv += '合规提示,AI分析结果仅为辅助参考，须由执业病理医生复核确认\n';
@@ -391,7 +391,7 @@
           csv += '分析结果确认,SLIDE-0009,2026-04-02 16:40\n';
           csv += '切片质控复核,SLIDE-0012,2026-04-01 11:05\n';
           csv += '\n说明,可与后台对接后改为实时数据。\n';
-          downloadTextFile('PathoVoyage-首页工作台.csv', csv, 'text/csv;charset=utf-8');
+          downloadTextFile('影航-首页工作台.csv', csv, 'text/csv;charset=utf-8');
         });
       }
 

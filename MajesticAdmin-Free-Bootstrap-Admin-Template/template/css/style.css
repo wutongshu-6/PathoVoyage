@@ -22849,7 +22849,7 @@ dl li {
   border-radius: 100%;
 }
 
-/* PathoVoyage：病理医生占位头像（SVG 圆框 + 内实色，避免空 span 在 flex 下不显示） */
+/* 影航：病理医生占位头像（SVG 圆框 + 内实色，避免空 span 在 flex 下不显示） */
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-profile .nav-link.dropdown-toggle {
   display: inline-flex !important;
   align-items: center;
@@ -23212,7 +23212,7 @@ dl li {
   outline: 1px solid slategrey;
 }
 
-/* PathoVoyage: fixed left sidebar on desktop — stays visible while main content scrolls */
+/* 影航: fixed left sidebar on desktop — stays visible while main content scrolls */
 @media (min-width: 992px) {
   .page-body-wrapper > .sidebar.sidebar-offcanvas {
     position: fixed;

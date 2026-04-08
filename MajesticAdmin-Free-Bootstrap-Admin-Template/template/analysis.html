@@ -61,6 +61,21 @@
     .pv-ai-log-click-area { cursor: pointer; }
     .pv-ai-log-click-area:focus { outline: 2px solid rgba(22, 93, 255, 0.45); outline-offset: 2px; }
 
+    /* 分析状态：六键均分多列，避免「生成报告」单独换行 */
+    .pv-analysis-action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+    @media (min-width: 380px) {
+      .pv-analysis-action-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .pv-analysis-action-grid .btn {
+      width: 100%;
+    }
+
     /* Patch 图库弹窗：与智能分析卡片、主色 #165DFF 统一 */
     .pv-patch-gallery-modal .modal-content {
       border-radius: 12px;
@@ -116,6 +131,66 @@
       height: auto;
       object-fit: contain;
       vertical-align: middle;
+    }
+    .pv-zoomable {
+      cursor: zoom-in;
+    }
+    .pv-image-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8, 14, 32, 0.82);
+      padding: 2.5rem;
+    }
+    .pv-image-lightbox.pv-open {
+      display: flex;
+    }
+    .pv-image-lightbox-inner {
+      position: relative;
+      max-width: min(92vw, 1600px);
+      max-height: 88vh;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 16px 48px rgba(2, 10, 24, 0.4);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .pv-image-lightbox img {
+      display: block;
+      max-width: 100%;
+      max-height: 88vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transform-origin: center center;
+      transition: transform 0.08s linear;
+      will-change: transform;
+      cursor: zoom-in;
+    }
+    .pv-image-lightbox img.pv-zoomed {
+      cursor: grab;
+    }
+    .pv-image-lightbox img.pv-panning {
+      cursor: grabbing;
+    }
+    .pv-image-lightbox-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      color: #fff;
+      font-size: 1.2rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
     .pv-patch-gallery-modal .pv-heatmap-stack {
       position: relative;
@@ -536,10 +611,18 @@
       <div class="mb-2 text-primary"><i class="mdi mdi-check-decagram" style="font-size:3rem;"></i></div>
       <h5 class="mb-2">智能分析已完成</h5>
       <p class="text-muted small mb-3">多尺度阅片与热力图叠加已结束，可进行复核或生成报告。</p>
-      <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
-        <button type="button" class="btn btn-outline-danger btn-sm btn-pv-gallery-high">浏览可疑 Patch</button>
-        <button type="button" class="btn btn-outline-secondary btn-sm btn-pv-gallery-all">浏览所有 Patch</button>
-        <button type="button" class="btn btn-outline-primary btn-sm btn-pv-gallery-heatmaps">浏览热力图</button>
+      <div class="mb-3">
+        <p class="small fw-semibold text-dark mb-2">结果查看与资料</p>
+        <p class="analysis-subtitle mb-1">Patch 与热力图</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center mb-2">
+          <button type="button" class="btn btn-outline-danger btn-sm btn-pv-gallery-high">浏览可疑 Patch</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-pv-gallery-all">浏览所有 Patch</button>
+          <button type="button" class="btn btn-outline-primary btn-sm btn-pv-gallery-heatmaps">浏览热力图</button>
+        </div>
+        <p class="analysis-subtitle mb-1">病例资料</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <button type="button" class="btn btn-outline-info btn-sm btn-pv-download-description">下载描述文件</button>
+        </div>
       </div>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <a href="report.html" class="btn btn-primary btn-sm">前往报告管理</a>
@@ -633,7 +716,7 @@
               <div class="card analysis-card-accent analysis-side-card">
                 <div class="card-body">
                   <p class="card-title d-flex align-items-center gap-2"><i class="mdi mdi-chart-timeline-variant text-primary"></i> 分析状态</p>
-                  <div class="mb-3 d-flex flex-wrap gap-1">
+                  <div class="mb-3 pv-analysis-action-grid">
                     <button type="button" id="start_coarse_btn" class="btn btn-primary btn-sm">开始粗筛</button>
                     <button type="button" id="start_fine_btn" class="btn btn-outline-primary btn-sm" disabled>开始细筛</button>
                     <button type="button" id="pause_btn" class="btn btn-outline-secondary btn-sm">暂停</button>
@@ -663,11 +746,16 @@
                   <input id="heatmap_opacity" type="range" class="form-range mb-3" min="0" max="100" value="50" disabled>
 
                   <div id="pv_patch_browse_wrap" class="d-none border-top pt-3">
-                    <p class="mb-2 small fw-semibold text-dark">Patch 浏览</p>
-                    <div class="d-flex flex-wrap gap-2">
+                    <p class="mb-2 small fw-semibold text-dark">结果查看与资料</p>
+                    <p class="analysis-subtitle mb-1">Patch 与热力图</p>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
                       <button type="button" class="btn btn-outline-danger btn-sm btn-pv-gallery-high">浏览可疑 Patch</button>
                       <button type="button" class="btn btn-outline-secondary btn-sm btn-pv-gallery-all">浏览所有 Patch</button>
                       <button type="button" class="btn btn-outline-primary btn-sm btn-pv-gallery-heatmaps">浏览热力图</button>
+                    </div>
+                    <p class="analysis-subtitle mb-1">病例资料</p>
+                    <div class="d-flex flex-wrap gap-2">
+                      <button type="button" class="btn btn-outline-info btn-sm btn-pv-download-description">下载描述文件</button>
                     </div>
                   </div>
                 </div>
@@ -713,6 +801,13 @@
     </div>
   </div>
 
+  <div id="pv_image_lightbox" class="pv-image-lightbox" aria-hidden="true">
+    <div class="pv-image-lightbox-inner">
+      <button type="button" id="pv_image_lightbox_close" class="pv-image-lightbox-close" aria-label="关闭">×</button>
+      <img id="pv_image_lightbox_img" alt="放大查看" />
+    </div>
+  </div>
+
   <script src="vendors/base/vendor.bundle.base.js"></script>
   <script src="vendors/chart.js/Chart.min.js"></script>
   <script src="vendors/datatables.net/jquery.dataTables.js"></script>
@@ -752,6 +847,7 @@
       var heatmapRevealProgressRaf = null;
       var progressTweenRaf = null;
       var lastDiagnosisConclusion = '';
+      var zoomStates = {};
       /** 最近一次高亮参数，用于窗口缩放后重算位置（相对热力图实际绘制区域） */
       var lastHighlightCoords = null;
       var highlightResizeTimer = null;
@@ -782,6 +878,179 @@
       function withNoCache(url) {
         if (!url) return '';
         return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + Date.now();
+      }
+
+      function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+      }
+
+      function applyZoom(key) {
+        var st = zoomStates[key];
+        if (!st || !st.el) return;
+        st.el.style.transform = 'scale(' + st.scale.toFixed(3) + ')';
+      }
+
+      function resetZoom(key) {
+        if (!zoomStates[key]) return;
+        zoomStates[key].scale = 1;
+        applyZoom(key);
+      }
+
+      function setZoomScale(key, scale) {
+        if (!zoomStates[key]) return;
+        zoomStates[key].scale = clamp(scale, 1, 6);
+        applyZoom(key);
+      }
+
+      function initZoomable(el, key) {
+        if (!el || !key) return;
+        if (!zoomStates[key]) {
+          zoomStates[key] = { el: el, scale: 1 };
+        } else {
+          zoomStates[key].el = el;
+        }
+        el.classList.add('pv-zoomable');
+        if (el.dataset.pvZoomBound === '1') {
+          applyZoom(key);
+          return;
+        }
+        el.dataset.pvZoomBound = '1';
+
+        el.addEventListener('click', function (e) {
+          if (e.button !== 0) return;
+          e.preventDefault();
+          openImageLightboxFromElement(el);
+        });
+
+        el.addEventListener('wheel', function (e) {
+          e.preventDefault();
+          openImageLightboxFromElement(el);
+        }, { passive: false });
+
+        applyZoom(key);
+      }
+
+      function getImageSourceFromElement(el) {
+        if (!el) return '';
+        if (el.tagName && el.tagName.toLowerCase() === 'img') {
+          return el.getAttribute('src') || '';
+        }
+        if (!el.querySelectorAll) return '';
+        // In heatmap stacks, always prefer overlay heatmap image over base pathology image.
+        var preferred = el.querySelector('#patch_modal_heatmap_img, #patch_gallery_img');
+        if (preferred && preferred.getAttribute('src') && !preferred.classList.contains('d-none')) {
+          return preferred.getAttribute('src') || '';
+        }
+        var imgs = el.querySelectorAll('img:not(.d-none)');
+        if (!imgs || !imgs.length) return '';
+        // Fallback: pick the last visible image in stack (usually top overlay).
+        for (var i = imgs.length - 1; i >= 0; i--) {
+          var s = imgs[i].getAttribute('src') || '';
+          if (s) return s;
+        }
+        return '';
+      }
+
+      function openImageLightboxFromElement(el) {
+        var src = getImageSourceFromElement(el);
+        if (!src) return;
+        var box = document.getElementById('pv_image_lightbox');
+        var img = document.getElementById('pv_image_lightbox_img');
+        if (!box || !img) return;
+        img.setAttribute('src', src);
+        img.dataset.scale = '1';
+        img.dataset.tx = '0';
+        img.dataset.ty = '0';
+        img.style.transform = 'translate(0px, 0px) scale(1)';
+        img.classList.remove('pv-zoomed');
+        box.classList.add('pv-open');
+        box.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeImageLightbox() {
+        var box = document.getElementById('pv_image_lightbox');
+        var img = document.getElementById('pv_image_lightbox_img');
+        if (!box || !img) return;
+        box.classList.remove('pv-open');
+        box.setAttribute('aria-hidden', 'true');
+        img.classList.remove('pv-panning');
+        img.removeAttribute('src');
+      }
+
+      function bindImageLightboxEvents() {
+        var box = document.getElementById('pv_image_lightbox');
+        var img = document.getElementById('pv_image_lightbox_img');
+        var closeBtn = document.getElementById('pv_image_lightbox_close');
+        var panState = { active: false, startX: 0, startY: 0, baseX: 0, baseY: 0 };
+        if (!box || !img) return;
+        function applyLightboxTransform() {
+          var scale = parseFloat(img.dataset.scale || '1');
+          var tx = parseFloat(img.dataset.tx || '0');
+          var ty = parseFloat(img.dataset.ty || '0');
+          if (!isFinite(scale)) scale = 1;
+          if (!isFinite(tx)) tx = 0;
+          if (!isFinite(ty)) ty = 0;
+          if (scale <= 1.001) {
+            tx = 0;
+            ty = 0;
+            img.dataset.tx = '0';
+            img.dataset.ty = '0';
+          }
+          img.style.transform = 'translate(' + tx.toFixed(1) + 'px, ' + ty.toFixed(1) + 'px) scale(' + scale.toFixed(3) + ')';
+          img.classList.toggle('pv-zoomed', scale > 1.001);
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeImageLightbox);
+        box.addEventListener('click', function (e) {
+          if (e.target === box) closeImageLightbox();
+        });
+        img.addEventListener('click', function () {
+          var scale = parseFloat(img.dataset.scale || '1');
+          scale = scale > 1.001 ? 1 : 2;
+          img.dataset.scale = String(scale);
+          applyLightboxTransform();
+        });
+        img.addEventListener('wheel', function (e) {
+          e.preventDefault();
+          var scale = parseFloat(img.dataset.scale || '1');
+          var delta = e.deltaY < 0 ? 0.2 : -0.2;
+          scale = clamp(scale + delta, 1, 8);
+          img.dataset.scale = String(scale);
+          applyLightboxTransform();
+        }, { passive: false });
+        img.addEventListener('mousedown', function (e) {
+          var scale = parseFloat(img.dataset.scale || '1');
+          if (e.button !== 0 || scale <= 1.001) return;
+          e.preventDefault();
+          panState.active = true;
+          panState.startX = e.clientX;
+          panState.startY = e.clientY;
+          panState.baseX = parseFloat(img.dataset.tx || '0') || 0;
+          panState.baseY = parseFloat(img.dataset.ty || '0') || 0;
+          img.classList.add('pv-panning');
+        });
+        document.addEventListener('mousemove', function (e) {
+          if (!panState.active) return;
+          var dx = e.clientX - panState.startX;
+          var dy = e.clientY - panState.startY;
+          img.dataset.tx = String(panState.baseX + dx);
+          img.dataset.ty = String(panState.baseY + dy);
+          applyLightboxTransform();
+        });
+        document.addEventListener('mouseup', function () {
+          if (!panState.active) return;
+          panState.active = false;
+          img.classList.remove('pv-panning');
+        });
+        document.addEventListener('mouseleave', function () {
+          if (!panState.active) return;
+          panState.active = false;
+          img.classList.remove('pv-panning');
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && box.classList.contains('pv-open')) {
+            closeImageLightbox();
+          }
+        });
       }
 
       function normalizeCaseId(raw) {
@@ -1082,6 +1351,11 @@
         }
       }
 
+      function downloadCaseDescription() {
+        var docPath = 'assets/docs/case_description.docx';
+        triggerDownload(resolveAssetUrl(docPath), '病例描述.docx');
+      }
+
       function getHighRiskPatchUrls(cfg) {
         if (!cfg || !cfg.assets) return [];
         var folder = cfg.assets.patches_folder || '';
@@ -1126,9 +1400,14 @@
         if (!modalPatchIds.length || modalPatchIndex < 0) return;
         var patchId = modalPatchIds[modalPatchIndex];
         var patchImg = document.getElementById('patch_modal_img');
+        var heatmapStack = document.querySelector('#patch_modal_heatmap_wrap .pv-heatmap-stack');
         var patchCandidates = buildPatchImageCandidates('', patchId);
         loadFirstWorkingImage(patchImg, patchCandidates, null, null);
         showPatchMiniHeatmap('', patchId);
+        initZoomable(patchImg, 'patch_main');
+        if (heatmapStack) initZoomable(heatmapStack, 'patch_heatmap');
+        resetZoom('patch_main');
+        resetZoom('patch_heatmap');
         var meta = getPatchMetaById(patchId);
         var tx = document.getElementById('patch_modal_text');
         if (tx) {
@@ -1172,6 +1451,7 @@
       function updatePatchGalleryUi() {
         var img = document.getElementById('patch_gallery_img');
         var baseImg = document.getElementById('patch_gallery_base_img');
+        var stackEl = document.querySelector('#patch_gallery_modal .pv-heatmap-stack');
         var cnt = document.getElementById('patch_gallery_counter');
         var fnEl = document.getElementById('patch_gallery_filename');
         if (!pvGalleryItems.length || !img) return;
@@ -1192,6 +1472,8 @@
         if (cnt) cnt.textContent = pvGalleryIndex + 1 + ' / ' + pvGalleryItems.length;
         if (fnEl) fnEl.textContent = fileNameFromUrl(overlayUrl);
         applyPatchGalleryOpacity();
+        initZoomable(stackEl || img, 'gallery_image');
+        resetZoom('gallery_image');
       }
 
       function stepPatchGallery(delta) {
@@ -1689,6 +1971,7 @@
       function showPatchModal(patch_image_path, description) {
         var img = document.getElementById('patch_modal_img');
         var tx = document.getElementById('patch_modal_text');
+        var heatmapStack = document.querySelector('#patch_modal_heatmap_wrap .pv-heatmap-stack');
         img.className = 'd-inline-block rounded';
         if (description) {
           tx.textContent = description;
@@ -1709,6 +1992,10 @@
         window.setTimeout(function () {
           syncPatchModalLog();
         }, 100);
+        initZoomable(img, 'patch_main');
+        if (heatmapStack) initZoomable(heatmapStack, 'patch_heatmap');
+        resetZoom('patch_main');
+        resetZoom('patch_heatmap');
       }
 
       function buildPatchImageCandidates(patchImagePath, patchId) {
@@ -2348,6 +2635,12 @@
           openHeatmapGallery();
         });
       });
+      document.querySelectorAll('.btn-pv-download-description').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          downloadCaseDescription();
+        });
+      });
 
       var pgPrev = document.getElementById('patch_gallery_prev');
       var pgNext = document.getElementById('patch_gallery_next');
@@ -2379,6 +2672,21 @@
         }
       });
 
+      var patchModalEl = document.getElementById('patch_modal');
+      if (patchModalEl) {
+        patchModalEl.addEventListener('hidden.bs.modal', function () {
+          resetZoom('patch_main');
+          resetZoom('patch_heatmap');
+        });
+      }
+      var patchGalleryModalEl = document.getElementById('patch_gallery_modal');
+      if (patchGalleryModalEl) {
+        patchGalleryModalEl.addEventListener('hidden.bs.modal', function () {
+          resetZoom('gallery_image');
+        });
+      }
+
+      bindImageLightboxEvents();
       loadCaseAndScript();
     })(window, document);
   </script>

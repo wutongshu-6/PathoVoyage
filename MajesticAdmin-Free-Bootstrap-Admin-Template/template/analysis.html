@@ -1356,6 +1356,11 @@
         triggerDownload(resolveAssetUrl(docPath), '病例描述.docx');
       }
 
+      function downloadAnalysisReport() {
+        var reportPath = 'assets/docs/diagnostic_report.pdf';
+        triggerDownload(resolveAssetUrl(reportPath), '诊断报告.pdf');
+      }
+
       function getHighRiskPatchUrls(cfg) {
         if (!cfg || !cfg.assets) return [];
         var folder = cfg.assets.patches_folder || '';
@@ -2473,15 +2478,8 @@
           });
       }
 
-      function buildReportUrl() {
-        var p = new URLSearchParams();
-        p.set('case_id', currentCaseId || getQueryParam('case_id') || 'npc');
-        if (lastDiagnosisConclusion) p.set('diagnosis_conclusion', lastDiagnosisConclusion);
-        return 'report.html?' + p.toString();
-      }
-
       function onReportClick() {
-        window.location.href = buildReportUrl();
+        downloadAnalysisReport();
       }
 
       function restartAnalysis() {

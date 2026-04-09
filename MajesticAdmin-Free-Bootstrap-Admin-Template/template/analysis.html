@@ -622,12 +622,24 @@
         <p class="analysis-subtitle mb-1">病例资料</p>
         <div class="d-flex flex-wrap gap-2 justify-content-center">
           <button type="button" class="btn btn-outline-info btn-sm btn-pv-download-description">下载描述文件</button>
+          <button type="button" class="btn btn-outline-primary btn-sm btn-pv-download-report">下载报告</button>
         </div>
       </div>
       <div class="d-flex flex-wrap gap-2 justify-content-center">
         <a href="report.html" class="btn btn-primary btn-sm">前往报告管理</a>
         <button type="button" class="btn btn-outline-secondary btn-sm" id="analysis_complete_dismiss">关闭</button>
       </div>
+    </div>
+  </div>
+
+  <div id="pv_report_generating_overlay" class="pv-report-generating-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:10050;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.65);">
+    <div class="card p-4 text-center shadow-lg" style="max-width:420px;">
+      <div class="mb-3 d-flex justify-content-center">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status" aria-label="加载中"></div>
+      </div>
+      <h5 class="mb-2">报告生成中</h5>
+      <p class="text-muted small mb-3 mb-md-4">正在汇总分析结果并排版报告，请稍候…</p>
+      <button type="button" class="btn btn-outline-secondary btn-sm" id="pv_report_generating_cancel">取消</button>
     </div>
   </div>
 
@@ -756,6 +768,7 @@
                     <p class="analysis-subtitle mb-1">病例资料</p>
                     <div class="d-flex flex-wrap gap-2">
                       <button type="button" class="btn btn-outline-info btn-sm btn-pv-download-description">下载描述文件</button>
+                      <button type="button" class="btn btn-outline-primary btn-sm btn-pv-download-report">下载报告</button>
                     </div>
                   </div>
                 </div>
@@ -847,6 +860,7 @@
       var heatmapRevealProgressRaf = null;
       var progressTweenRaf = null;
       var lastDiagnosisConclusion = '';
+      var reportGenTimer = null;
       var zoomStates = {};
       /** 最近一次高亮参数，用于窗口缩放后重算位置（相对热力图实际绘制区域） */
       var lastHighlightCoords = null;
@@ -2478,8 +2492,41 @@
           });
       }
 
+      function buildReportViewUrl() {
+        var p = new URLSearchParams();
+        p.set('case_id', currentCaseId || getQueryParam('case_id') || 'npc');
+        if (lastDiagnosisConclusion) p.set('diagnosis_conclusion', lastDiagnosisConclusion);
+        return 'report_view.html?' + p.toString();
+      }
+
+      function cancelReportGenerating() {
+        if (reportGenTimer) {
+          clearTimeout(reportGenTimer);
+          reportGenTimer = null;
+        }
+        var ov = document.getElementById('pv_report_generating_overlay');
+        if (ov) {
+          ov.style.display = 'none';
+          ov.setAttribute('aria-hidden', 'true');
+        }
+        var rb = document.getElementById('report_btn');
+        if (rb) rb.disabled = false;
+      }
+
       function onReportClick() {
-        downloadAnalysisReport();
+        if (reportGenTimer) return;
+        var url = buildReportViewUrl();
+        var ov = document.getElementById('pv_report_generating_overlay');
+        if (ov) {
+          ov.style.display = 'flex';
+          ov.setAttribute('aria-hidden', 'false');
+        }
+        var rb = document.getElementById('report_btn');
+        if (rb) rb.disabled = true;
+        reportGenTimer = setTimeout(function () {
+          reportGenTimer = null;
+          window.location.href = url;
+        }, 10000);
       }
 
       function restartAnalysis() {
@@ -2608,6 +2655,8 @@
       if (patchNextBtn) patchNextBtn.addEventListener('click', function () { stepPatchModal(1); });
       document.getElementById('restart_btn').addEventListener('click', restartAnalysis);
       document.getElementById('report_btn').addEventListener('click', onReportClick);
+      var reportGenCancel = document.getElementById('pv_report_generating_cancel');
+      if (reportGenCancel) reportGenCancel.addEventListener('click', cancelReportGenerating);
 
       document.getElementById('analysis_complete_dismiss').addEventListener('click', function () {
         var ov = document.getElementById('analysis_complete_overlay');
@@ -2637,6 +2686,12 @@
         btn.addEventListener('click', function (e) {
           e.preventDefault();
           downloadCaseDescription();
+        });
+      });
+      document.querySelectorAll('.btn-pv-download-report').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          downloadAnalysisReport();
         });
       });
 

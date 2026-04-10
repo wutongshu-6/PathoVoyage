@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pv-theme-glass.css" />
   <link rel="shortcut icon" href="images/favicon.png" />
   <style>
     /* 与报告/任务等页一致的内容区节奏；浅蓝灰背景仅作氛围，不压缩顶栏留白 */
@@ -30,6 +31,9 @@
   </style>
 </head>
 <body>
+  <script>
+  (function(){var k='pv_sidebar_icon_only';try{if(localStorage.getItem(k)==='1'){document.body.classList.add('sidebar-icon-only');return;}}catch(e){}var m=document.cookie.match(new RegExp('(?:^|; )'+k+'=([^;]*)'));if(m&&decodeURIComponent(m[1])==='1')document.body.classList.add('sidebar-icon-only');})();
+  </script>
   <div class="container-scroller">
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="navbar-brand-wrapper d-flex justify-content-center">
@@ -181,6 +185,7 @@
     </div>
   </div>
   <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="js/sidebar-state-boot.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/hoverable-collapse.js"></script>
   <script src="js/template.js"></script>

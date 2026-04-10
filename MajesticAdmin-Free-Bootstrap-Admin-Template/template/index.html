@@ -15,10 +15,14 @@
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pv-theme-glass.css" />
   <!-- endinject -->
   <link rel="shortcut icon" href="images/favicon.png" />
 </head>
 <body>
+  <script>
+  (function(){var k='pv_sidebar_icon_only';try{if(localStorage.getItem(k)==='1'){document.body.classList.add('sidebar-icon-only');return;}}catch(e){}var m=document.cookie.match(new RegExp('(?:^|; )'+k+'=([^;]*)'));if(m&&decodeURIComponent(m[1])==='1')document.body.classList.add('sidebar-icon-only');})();
+  </script>
   <div class="container-scroller">
     
     <!-- partial:partials/_navbar.html -->
@@ -352,6 +356,7 @@
   <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
   <!-- End plugin js for this page-->
   <!-- inject:js -->
+  <script src="js/sidebar-state-boot.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/hoverable-collapse.js"></script>
   <script src="js/template.js"></script>

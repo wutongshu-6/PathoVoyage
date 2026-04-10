@@ -7,9 +7,13 @@
   <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pv-theme-glass.css" />
   <link rel="shortcut icon" href="images/favicon.png" />
 </head>
 <body>
+  <script>
+  (function(){var k='pv_sidebar_icon_only';try{if(localStorage.getItem(k)==='1'){document.body.classList.add('sidebar-icon-only');return;}}catch(e){}var m=document.cookie.match(new RegExp('(?:^|; )'+k+'=([^;]*)'));if(m&&decodeURIComponent(m[1])==='1')document.body.classList.add('sidebar-icon-only');})();
+  </script>
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
       <div class="content-wrapper d-flex align-items-center auth px-0">
@@ -62,6 +66,7 @@
     </div>
   </div>
   <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="js/sidebar-state-boot.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/hoverable-collapse.js"></script>
   <script src="js/template.js"></script>

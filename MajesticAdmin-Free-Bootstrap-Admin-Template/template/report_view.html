@@ -7,91 +7,72 @@
   <link rel="stylesheet" href="vendors/mdi/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pv-theme-glass.css" />
   <link rel="shortcut icon" href="images/favicon.png" />
-  <style>
-    /* 专注阅读：无全局顶栏/侧栏，主区域全宽 */
-    .pv-report-view-page .page-body-wrapper.pv-report-body-wrapper {
-      padding-top: 0 !important;
-      min-height: 100vh;
-    }
-    .pv-report-view-page .main-panel {
-      width: 100% !important;
-      min-height: 100vh;
-    }
-    /* 报告页：主内容区水平居中（与常见 PDF 版心宽度协调） */
-    .pv-report-view-page .content-wrapper {
-      padding: 0.45rem 0.35rem 0.2rem 0.35rem !important;
-      max-width: min(1120px, 100%);
-      width: 100%;
-      margin-left: auto !important;
-      margin-right: auto !important;
-      background: #fff !important;
-    }
-    @media (min-width: 1200px) {
-      .pv-report-view-page .content-wrapper {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-      }
-    }
-    .pv-report-view-page .pv-report-toolbar {
-      padding-top: 0.35rem;
-    }
-    .pv-report-view-page .pv-report-toolbar h2 {
-      font-size: 1.35rem;
-      margin-bottom: 0.15rem;
-    }
-    .pv-report-view-card {
-      border-left: 4px solid #165DFF;
-      box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
-      margin-bottom: 0 !important;
-      margin-left: auto;
-      margin-right: auto;
-      max-width: 100%;
-    }
-    #pv_report_pdf_frame {
-      display: block;
-      width: 100%;
-      border: 0;
-      background: #e8edf3;
-      /* 无顶栏/侧栏后，主要为工具条 + 底部提示预留高度 */
-      height: calc(100vh - 118px);
-      min-height: 620px;
-    }
-    @media (max-width: 991px) {
-      #pv_report_pdf_frame {
-        height: calc(100vh - 140px);
-        min-height: 480px;
-      }
-    }
-  </style>
 </head>
 <body class="pv-report-view-page">
+  <script>
+  (function(){var k='pv_sidebar_icon_only';try{if(localStorage.getItem(k)==='1'){document.body.classList.add('sidebar-icon-only');return;}}catch(e){}var m=document.cookie.match(new RegExp('(?:^|; )'+k+'=([^;]*)'));if(m&&decodeURIComponent(m[1])==='1')document.body.classList.add('sidebar-icon-only');})();
+  </script>
   <div class="container-scroller">
     <div class="container-fluid page-body-wrapper pv-report-body-wrapper">
       <div class="main-panel">
         <div class="content-wrapper">
-          <div class="d-flex flex-wrap justify-content-between align-items-start align-items-md-center gap-2 mb-2 pv-report-toolbar">
-            <div class="pr-2">
-              <h2 class="d-flex align-items-center gap-2 flex-wrap"><i class="mdi mdi-file-document-outline text-primary"></i> 诊断报告</h2>
-              <p class="text-muted small mb-0" id="pv_report_subtitle">预览当前病例的诊断报告 PDF。</p>
-            </div>
-            <div class="d-flex flex-wrap gap-2 flex-shrink-0">
-              <a id="pv_report_download_btn" href="assets/docs/diagnostic_report.pdf" download="诊断报告.pdf" class="btn btn-primary btn-sm">下载报告</a>
-              <a id="pv_report_back_btn" href="analysis.html" class="btn btn-outline-secondary btn-sm">返回智能分析</a>
-            </div>
-          </div>
+          <div class="pv-report-layout">
+            <div class="pv-report-main">
+              <div class="pv-report-shell">
+                <div class="d-flex flex-wrap justify-content-between align-items-start align-items-md-center gap-3 pv-report-toolbar">
+                  <div class="pr-1 flex-grow-1 pv-report-toolbar-text">
+                    <h2 class="d-flex align-items-center gap-2 flex-wrap mb-1"><i class="mdi mdi-file-document-outline text-primary"></i> 诊断报告</h2>
+                    <p class="text-muted small mb-0" id="pv_report_subtitle">预览当前病例的诊断报告 PDF。</p>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 flex-shrink-0 align-items-center">
+                    <a id="pv_report_download_btn" href="assets/docs/diagnostic_report.pdf" download="诊断报告.pdf" class="btn btn-primary btn-sm">下载报告</a>
+                    <a id="pv_report_back_btn" href="analysis.html" class="btn btn-outline-secondary btn-sm">返回智能分析</a>
+                  </div>
+                </div>
 
-          <div class="card pv-report-view-card">
-            <div class="card-body p-0">
-              <iframe id="pv_report_pdf_frame" class="w-100 d-block" title="诊断报告 PDF"></iframe>
+                <div class="card pv-report-view-card border-0">
+                  <div class="card-body p-0">
+                    <div class="pv-report-pdf-frame-wrap">
+                      <iframe id="pv_report_pdf_frame" class="w-100 d-block" title="诊断报告 PDF"></iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted small mt-3 mb-0 pv-report-footnote">若浏览器无法内嵌显示 PDF，请直接点击「下载报告」或侧栏「新标签页打开」。</p>
             </div>
+
+            <aside class="pv-report-rail" aria-label="报告侧栏">
+              <div class="pv-report-rail-brand">
+                <span class="pv-report-rail-logo">影航</span>
+                <span class="pv-report-rail-tag">PathoVoyage</span>
+              </div>
+              <div class="pv-report-rail-card">
+                <p class="pv-report-rail-label mb-1">当前病例</p>
+                <p class="pv-report-rail-case" id="pv_report_rail_case">—</p>
+                <p class="pv-report-rail-meta small text-muted mb-0">标准化病理诊断报告 · PDF</p>
+              </div>
+              <div class="pv-report-rail-tips">
+                <p class="pv-report-rail-tips-title"><i class="mdi mdi-lightbulb-outline text-primary"></i> 阅读提示</p>
+                <ul class="pv-report-rail-tips-list">
+                  <li>使用浏览器内置工具缩放、搜索、翻页。</li>
+                  <li>打印请使用 PDF 查看器内「打印」。</li>
+                  <li>内嵌异常时，可下载或新标签打开。</li>
+                </ul>
+              </div>
+              <a id="pv_report_open_tab" class="pv-report-rail-link" href="assets/docs/diagnostic_report.pdf" target="_blank" rel="noopener noreferrer">
+                <i class="mdi mdi-open-in-new"></i> 新标签页打开 PDF
+              </a>
+              <div class="pv-report-rail-deco" aria-hidden="true"></div>
+            </aside>
           </div>
-          <p class="text-muted small mt-2 mb-0 text-center">若浏览器无法内嵌显示 PDF，请直接点击「下载报告」。</p>
         </div>
       </div>
     </div>
   </div>
   <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="js/sidebar-state-boot.js"></script>
   <script src="js/off-canvas.js"></script>
   <script src="js/hoverable-collapse.js"></script>
   <script src="js/template.js"></script>
@@ -107,6 +88,14 @@
       var sub = document.getElementById('pv_report_subtitle');
       if (sub) {
         sub.textContent = '病例编号：' + caseId + ' · 以下为 PDF 预览。';
+      }
+      var railCase = document.getElementById('pv_report_rail_case');
+      if (railCase) {
+        railCase.textContent = caseId;
+      }
+      var openTab = document.getElementById('pv_report_open_tab');
+      if (openTab) {
+        openTab.href = PDF_SRC;
       }
       var frame = document.getElementById('pv_report_pdf_frame');
       if (frame) {

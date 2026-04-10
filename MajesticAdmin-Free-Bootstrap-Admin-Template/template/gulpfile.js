@@ -86,6 +86,7 @@ gulp.task('injectCommonAssets', function () {
     ], {read: false}), {name: 'plugins', relative: true}))
     .pipe(inject(gulp.src([
         './css/*.css', 
+        './js/sidebar-state-boot.js',
         './js/off-canvas.js', 
         './js/hoverable-collapse.js', 
         './js/template.js'

@@ -8,13 +8,14 @@
   <link rel="stylesheet" href="vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="vendors/datatables.net-bs4/dataTables.bootstrap4.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pv-theme-glass.css" />
   <link rel="shortcut icon" href="images/favicon.png" />
   <style>
     :root { --pv-blue: #165DFF; --pv-blue-soft: rgba(22, 93, 255, 0.08); }
     .analysis-page-hero {
-      background: linear-gradient(135deg, var(--pv-blue-soft) 0%, #fff 48%, rgba(22, 93, 255, 0.04) 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 52%, #f1f5f9 100%);
       border-radius: 12px;
-      border: 1px solid rgba(22, 93, 255, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.22);
       padding: 1.25rem 1.5rem;
       margin-bottom: 0.5rem;
     }
@@ -44,8 +45,8 @@
       vertical-align: top;
     }
     .pv-ai-log-preview {
-      background: #e8f4fc !important;
-      border: 1px solid #cfe8f8 !important;
+      background: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
       min-height: 240px;
       max-height: min(42vh, 440px);
       overflow-y: auto;
@@ -76,19 +77,7 @@
       width: 100%;
     }
 
-    /* Patch 图库弹窗：与智能分析卡片、主色 #165DFF 统一 */
-    .pv-patch-gallery-modal .modal-content {
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(22, 93, 255, 0.12);
-      border-left: 4px solid var(--pv-blue);
-      box-shadow: 0 8px 40px rgba(15, 23, 42, 0.1);
-      background: #fff;
-    }
-    .pv-patch-gallery-modal .modal-header {
-      background: linear-gradient(135deg, rgba(22, 93, 255, 0.06) 0%, #fff 55%);
-      border-bottom: 1px solid rgba(22, 93, 255, 0.1);
-    }
+    /* Patch 图库弹窗：版式与热力图叠层（玻璃/边框见 pv-theme-glass.css） */
     .pv-patch-gallery-modal .modal-title {
       color: #0f172a;
       font-weight: 700;
@@ -119,10 +108,6 @@
     .pv-patch-gallery-modal .pv-patch-gallery-frame {
       min-width: 0;
       max-width: 100%;
-      background: #fff;
-      border-radius: 10px;
-      padding: 0.5rem;
-      box-shadow: inset 0 0 0 1px rgba(22, 93, 255, 0.12);
     }
     .pv-patch-gallery-modal #patch_gallery_img {
       max-height: 75vh;
@@ -134,63 +119,6 @@
     }
     .pv-zoomable {
       cursor: zoom-in;
-    }
-    .pv-image-lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 20000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(8, 14, 32, 0.82);
-      padding: 2.5rem;
-    }
-    .pv-image-lightbox.pv-open {
-      display: flex;
-    }
-    .pv-image-lightbox-inner {
-      position: relative;
-      max-width: min(92vw, 1600px);
-      max-height: 88vh;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 16px 48px rgba(2, 10, 24, 0.4);
-      background: rgba(255, 255, 255, 0.02);
-    }
-    .pv-image-lightbox img {
-      display: block;
-      max-width: 100%;
-      max-height: 88vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      transform-origin: center center;
-      transition: transform 0.08s linear;
-      will-change: transform;
-      cursor: zoom-in;
-    }
-    .pv-image-lightbox img.pv-zoomed {
-      cursor: grab;
-    }
-    .pv-image-lightbox img.pv-panning {
-      cursor: grabbing;
-    }
-    .pv-image-lightbox-close {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      width: 34px;
-      height: 34px;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.6);
-      color: #fff;
-      font-size: 1.2rem;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
     }
     .pv-patch-gallery-modal .pv-heatmap-stack {
       position: relative;
@@ -219,41 +147,10 @@
       max-width: min(82vw, 1180px);
     }
 
-    /* 病灶高倍观察：左图右日志，与主站卡片/日志样式统一 */
-    .pv-patch-observe-modal .modal-content {
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(22, 93, 255, 0.12);
-      border-left: 4px solid var(--pv-blue);
-      box-shadow: 0 8px 40px rgba(15, 23, 42, 0.1);
-      position: relative;
-    }
-    .pv-patch-observe-modal .modal-dialog {
-      max-width: min(96vw, 1680px);
-    }
-    .pv-patch-observe-modal .modal-content {
-      height: min(88vh, 920px);
-      display: flex;
-      flex-direction: column;
-    }
-    .pv-patch-observe-modal .modal-body {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: hidden;
-    }
-    .pv-patch-observe-modal .modal-header {
-      background: linear-gradient(135deg, rgba(22, 93, 255, 0.06) 0%, #fff 55%);
-      border-bottom: 1px solid rgba(22, 93, 255, 0.1);
-    }
+    /* 病灶高倍观察：壳层样式见 pv-theme-glass.css */
     .pv-patch-observe-modal .modal-title {
       color: #0f172a;
       font-weight: 700;
-    }
-    .pv-patch-observe-modal .pv-patch-observe-frame {
-      background: #fff;
-      border-radius: 10px;
-      padding: 0.5rem;
-      box-shadow: inset 0 0 0 1px rgba(22, 93, 255, 0.12);
     }
     .pv-patch-observe-modal #patch_modal_img {
       max-height: min(60vh, 560px);
@@ -291,23 +188,13 @@
       top: 0;
       z-index: 2;
     }
-    #patch_modal_control_group {
-      position: absolute;
-      left: 1.1rem;
-      bottom: 1.05rem;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
+    /* 底栏布局见 pv-theme-glass.css .pv-modal-action-bar */
     #patch_modal_pause_btn,
     #patch_modal_resume_btn {
       min-width: 86px;
       min-height: 40px;
       font-size: 0.92rem;
       border-radius: 8px;
-      background: #fff;
     }
     #start_fine_from_modal_btn {
       min-width: 130px;
@@ -330,25 +217,15 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      border: 1px solid rgba(22, 93, 255, 0.35);
-      background: rgba(255, 255, 255, 0.95);
       color: #165dff;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
       cursor: pointer;
     }
     #patch_modal_prev_btn { left: 0.25rem; }
     #patch_modal_next_btn { right: 0.25rem; }
     .pv-modal-switch-arrow .mdi { font-size: 1.25rem; line-height: 1; }
-    .pv-patch-observe-modal #patch_modal_log_container {
-      background: #e8f4fc !important;
-      border: 1px solid #cfe8f8 !important;
-      font-size: 0.9rem;
-      line-height: 1.55;
-      height: 100%;
-    }
     .pv-patch-observe-modal .pv-patch-modal-split-left,
     .pv-patch-observe-modal .pv-patch-modal-split-left > .row,
     .pv-patch-observe-modal .pv-patch-modal-split-left > .row > [class*="col-"] {
@@ -364,14 +241,10 @@
     #patch_modal_opacity_wrap {
       margin-top: 0.75rem;
       padding: 0.55rem 0.65rem 0.35rem;
-      border-radius: 8px;
-      background: rgba(22, 93, 255, 0.06);
-      border: 1px solid rgba(22, 93, 255, 0.16);
     }
     @media (min-width: 992px) {
       .pv-patch-observe-modal .pv-patch-modal-split-left {
-        border-right: 1px solid rgba(22, 93, 255, 0.12);
-        padding-right: 1rem;
+        padding-right: 0.5rem;
       }
     }
 
@@ -492,11 +365,14 @@
     }
   </style>
 </head>
-<body>
-  <div class="modal fade" id="ai_log_modal" tabindex="-1" aria-labelledby="ai_log_modal_title" aria-hidden="true">
+<body class="pv-page-analysis">
+  <script>
+  (function(){var k='pv_sidebar_icon_only';try{if(localStorage.getItem(k)==='1'){document.body.classList.add('sidebar-icon-only');return;}}catch(e){}var m=document.cookie.match(new RegExp('(?:^|; )'+k+'=([^;]*)'));if(m&&decodeURIComponent(m[1])==='1')document.body.classList.add('sidebar-icon-only');})();
+  </script>
+  <div class="modal fade pv-ai-log-modal" id="ai_log_modal" tabindex="-1" aria-labelledby="ai_log_modal_title" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header py-2">
+        <div class="modal-header py-2 pv-modal-header-premium">
           <h5 class="modal-title" id="ai_log_modal_title">AI诊断思考日志</h5>
           <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
         </div>
@@ -508,7 +384,7 @@
   <div class="modal fade pv-patch-observe-modal" id="patch_modal" tabindex="-1" aria-labelledby="patch_modal_title" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header py-3 pr-4">
+        <div class="modal-header py-3 pr-4 pv-modal-header-premium">
           <div class="d-flex align-items-start">
             <span class="mdi mdi-microscope text-primary mr-2" style="font-size:1.55rem;line-height:1.2;"></span>
             <div>
@@ -518,9 +394,9 @@
           </div>
           <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="modal-body bg-light py-3">
-          <div class="row">
-            <div class="col-12 col-lg-5 pv-patch-modal-split-left mb-3 mb-lg-0">
+        <div class="modal-body bg-light py-3 pv-patch-observe-modal-body">
+          <div class="row flex-grow-1 min-h-0 pv-patch-modal-main-row">
+            <div class="col-12 col-lg-5 pv-patch-modal-split-left pv-patch-modal-col pv-patch-modal-col--visual mb-3 mb-lg-0">
               <div class="row pv-patch-visual-wrap">
                 <button type="button" id="patch_modal_prev_btn" class="pv-modal-switch-arrow d-none" aria-label="上一张">
                   <i class="mdi mdi-chevron-left"></i>
@@ -529,13 +405,13 @@
                   <i class="mdi mdi-chevron-right"></i>
                 </button>
                 <div class="col-12 col-lg-6 mb-3 mb-lg-0">
-                  <p class="small font-weight-semibold text-dark mb-2"><i class="mdi mdi-image-filter-center-focus text-primary"></i> 可疑病灶 Patch</p>
+                  <p class="pv-modal-section-label mb-2"><i class="mdi mdi-image-filter-center-focus text-primary"></i> 可疑病灶 Patch</p>
                   <div class="pv-patch-observe-frame text-center">
                     <img id="patch_modal_img" alt="病灶 Patch" />
                   </div>
                 </div>
                 <div class="col-12 col-lg-6" id="patch_modal_heatmap_wrap">
-                  <p class="small font-weight-semibold text-dark mb-2"><i class="mdi mdi-fire text-danger"></i> Patch 小热力图</p>
+                  <p class="pv-modal-section-label mb-2"><i class="mdi mdi-fire text-danger"></i> Patch 小热力图</p>
                   <div class="pv-patch-observe-frame text-center">
                     <div class="pv-heatmap-stack">
                       <img id="patch_modal_heatmap_base_img" alt="Patch 原图底图" />
@@ -548,19 +424,21 @@
                 <label class="mb-1 small" for="patch_modal_heatmap_opacity">热力图深浅调节</label>
                 <input id="patch_modal_heatmap_opacity" type="range" class="form-range mb-1" min="0" max="100" value="60">
               </div>
-              <p id="patch_modal_text" class="small text-muted mt-3 mb-0 pt-2 border-top" style="border-color: rgba(22,93,255,0.12) !important;"></p>
+              <p id="patch_modal_text" class="small text-muted mt-3 mb-0 pt-2 border-top pv-patch-modal-caption" style="border-color: rgba(22,93,255,0.12) !important;"></p>
             </div>
-            <div class="col-12 col-lg-7 pl-lg-3">
-              <p class="small font-weight-semibold text-dark mb-2"><i class="mdi mdi-text-box-search-outline text-primary"></i> AI 诊断思考日志</p>
-              <div id="patch_modal_log_container" class="rounded p-3" style="max-height: min(62vh, 520px); overflow-y: auto;"></div>
+            <div class="col-12 col-lg-7 pl-lg-3 pv-patch-modal-col pv-patch-modal-col--log d-flex flex-column min-h-0">
+              <p class="pv-modal-section-label mb-2 flex-shrink-0"><i class="mdi mdi-text-box-search-outline text-primary"></i> AI 诊断思考日志</p>
+              <div id="patch_modal_log_container" class="pv-patch-log-panel rounded flex-grow-1 min-h-0" style="max-height: min(62vh, 520px); overflow-y: auto;"></div>
             </div>
           </div>
-          <div id="patch_modal_control_group">
-            <button type="button" id="patch_modal_download_patch_btn" class="btn btn-outline-primary">下载原图</button>
-            <button type="button" id="patch_modal_download_heatmap_btn" class="btn btn-outline-primary">下载热力图</button>
-            <button type="button" id="patch_modal_pause_btn" class="btn btn-outline-secondary">暂停</button>
-            <button type="button" id="patch_modal_resume_btn" class="btn btn-outline-primary">继续</button>
-            <button type="button" id="start_fine_from_modal_btn" class="btn btn-primary d-none">继续细筛</button>
+          <div id="patch_modal_control_group" class="pv-modal-action-bar">
+            <div class="pv-modal-action-bar__group">
+              <button type="button" id="patch_modal_download_patch_btn" class="btn btn-outline-primary btn-sm">下载原图</button>
+              <button type="button" id="patch_modal_download_heatmap_btn" class="btn btn-outline-primary btn-sm">下载热力图</button>
+              <button type="button" id="patch_modal_pause_btn" class="btn btn-outline-secondary btn-sm">暂停</button>
+              <button type="button" id="patch_modal_resume_btn" class="btn btn-outline-primary btn-sm">继续</button>
+            </div>
+            <button type="button" id="start_fine_from_modal_btn" class="btn btn-primary btn-sm d-none">继续细筛</button>
           </div>
         </div>
       </div>
@@ -570,7 +448,7 @@
   <div class="modal fade pv-patch-gallery-modal" id="patch_gallery_modal" tabindex="-1" aria-labelledby="patch_gallery_title" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" id="patch_gallery_dialog">
       <div class="modal-content">
-        <div class="modal-header py-3 pr-4">
+        <div class="modal-header py-3 pr-4 pv-modal-header-premium">
           <div class="d-flex align-items-start">
             <span class="mdi mdi-image-multiple-outline text-primary mr-2" style="font-size:1.65rem;line-height:1.2;"></span>
             <div>
@@ -581,35 +459,57 @@
           <button type="button" id="patch_gallery_download_btn" class="btn btn-sm btn-outline-primary mr-2">下载当前图片</button>
           <button type="button" class="close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="关闭"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="modal-body bg-light py-4">
-          <div class="d-flex align-items-center justify-content-center flex-wrap" id="patch_gallery_row">
-            <button type="button" class="btn btn-outline-primary pv-gallery-nav mr-2 mb-2" id="patch_gallery_prev" aria-label="上一张">
-              <i class="mdi mdi-chevron-left"></i>
-            </button>
-            <div class="pv-patch-gallery-frame flex-grow-1 mx-2 mb-2 text-center" style="min-width: 0;">
-              <div class="pv-heatmap-stack d-inline-block">
-                <img id="patch_gallery_base_img" class="rounded d-none" alt="" />
-                <img id="patch_gallery_img" class="rounded d-inline-block" alt="" />
+        <div class="modal-body bg-light py-3 py-lg-4 pv-patch-gallery-modal-body">
+          <div class="row align-items-stretch pv-gallery-split">
+            <div class="col-12 col-lg-8 mb-3 mb-lg-0 pv-gallery-col pv-gallery-col--viewer">
+              <p class="pv-modal-section-label mb-2"><i class="mdi mdi-monitor-eye text-primary"></i> 阅片区</p>
+              <div class="pv-gallery-viewer-panel">
+                <div class="d-flex align-items-center justify-content-center flex-wrap" id="patch_gallery_row">
+                  <button type="button" class="btn btn-outline-primary pv-gallery-nav mr-2 mb-2" id="patch_gallery_prev" aria-label="上一张">
+                    <i class="mdi mdi-chevron-left"></i>
+                  </button>
+                  <div class="pv-patch-gallery-frame flex-grow-1 mx-2 mb-2 text-center" style="min-width: 0;">
+                    <div class="pv-heatmap-stack d-inline-block">
+                      <img id="patch_gallery_base_img" class="rounded d-none" alt="" />
+                      <img id="patch_gallery_img" class="rounded d-inline-block" alt="" />
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline-primary pv-gallery-nav ml-2 mb-2" id="patch_gallery_next" aria-label="下一张">
+                    <i class="mdi mdi-chevron-right"></i>
+                  </button>
+                </div>
+                <div id="patch_gallery_opacity_wrap" class="mt-2 d-none px-1">
+                  <label class="mb-1 small text-muted" for="patch_gallery_opacity">热力图深浅调节</label>
+                  <input id="patch_gallery_opacity" type="range" class="form-range mb-1" min="0" max="100" value="65">
+                </div>
               </div>
             </div>
-            <button type="button" class="btn btn-outline-primary pv-gallery-nav ml-2 mb-2" id="patch_gallery_next" aria-label="下一张">
-              <i class="mdi mdi-chevron-right"></i>
-            </button>
+            <div class="col-12 col-lg-4 pv-gallery-col pv-gallery-col--side">
+              <p class="pv-modal-section-label mb-2"><i class="mdi mdi-information-outline text-primary"></i> 浏览说明</p>
+              <div class="pv-gallery-side-card">
+                <ul class="pv-gallery-side-list small text-muted mb-0 pl-3">
+                  <li>全景概览类长条图：切换按钮在阅片区<strong>上、下</strong>，箭头朝<strong>上 / 下</strong>；其它图片：按钮在<strong>左、右</strong>两侧，箭头朝<strong>左 / 右</strong>。</li>
+                  <li>热力图模式下可拖动滑块调节叠加热力深浅。</li>
+                  <li>支持点击放大查看细节（若已开启灯箱）。</li>
+                  <li>需要保存时使用顶栏「下载当前图片」。</li>
+                </ul>
+              </div>
+              <div class="pv-gallery-side-deco" aria-hidden="true"></div>
+            </div>
           </div>
-          <div id="patch_gallery_opacity_wrap" class="mt-2 d-none">
-            <label class="mb-1 small" for="patch_gallery_opacity">热力图深浅调节</label>
-            <input id="patch_gallery_opacity" type="range" class="form-range mb-1" min="0" max="100" value="65">
+          <div class="pv-gallery-footer-bar mt-3">
+            <p class="small text-muted mb-1 mb-lg-0 text-break font-weight-medium flex-grow-1 text-center text-lg-left" id="patch_gallery_filename"></p>
+            <p class="small text-muted mb-0 pv-gallery-footer-hint d-none d-md-block">提示：文件名随当前 Patch 自动更新</p>
           </div>
-          <p class="small text-muted text-center mt-3 mb-0 text-break font-weight-medium" id="patch_gallery_filename"></p>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="analysis_complete_overlay" class="analysis-complete-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.55);">
-    <div class="card p-4 text-center" style="max-width:480px;">
-      <div class="mb-2 text-primary"><i class="mdi mdi-check-decagram" style="font-size:3rem;"></i></div>
-      <h5 class="mb-2">智能分析已完成</h5>
+  <div id="analysis_complete_overlay" class="analysis-complete-overlay pv-overlay pv-overlay--success" aria-hidden="true" style="display:none;">
+    <div class="card p-4 text-center pv-overlay-card pv-overlay-card--complete" style="max-width:480px;">
+      <div class="pv-overlay-card__icon-wrap mb-3"><i class="mdi mdi-check-decagram text-primary"></i></div>
+      <h5 class="mb-2 font-weight-semibold">智能分析已完成</h5>
       <p class="text-muted small mb-3">多尺度阅片与热力图叠加已结束，可进行复核或生成报告。</p>
       <div class="mb-3">
         <p class="small fw-semibold text-dark mb-2">结果查看与资料</p>
@@ -632,13 +532,14 @@
     </div>
   </div>
 
-  <div id="pv_report_generating_overlay" class="pv-report-generating-overlay" aria-hidden="true" style="position:fixed;inset:0;z-index:10050;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.65);">
-    <div class="card p-4 text-center shadow-lg" style="max-width:420px;">
-      <div class="mb-3 d-flex justify-content-center">
-        <div class="spinner-border text-primary" style="width:3rem;height:3rem;" role="status" aria-label="加载中"></div>
+  <div id="pv_report_generating_overlay" class="pv-report-generating-overlay pv-overlay pv-overlay--generating" aria-hidden="true" style="display:none;">
+    <div class="card p-4 text-center pv-overlay-card pv-overlay-card--loading shadow-lg" style="max-width:420px;">
+      <div class="pv-overlay-loading mb-3" role="status" aria-label="加载中">
+        <span class="pv-overlay-loading__ring"></span>
+        <span class="pv-overlay-loading__icon mdi mdi-file-document-outline"></span>
       </div>
-      <h5 class="mb-2">报告生成中</h5>
-      <p class="text-muted small mb-3 mb-md-4">正在汇总分析结果并排版报告，请稍候…</p>
+      <h5 class="mb-2 font-weight-semibold">报告生成中</h5>
+      <p class="text-muted small mb-3 mb-md-4">正在汇总分析结果并排版报告<span class="pv-overlay-dots" aria-hidden="true"></span></p>
       <button type="button" class="btn btn-outline-secondary btn-sm" id="pv_report_generating_cancel">取消</button>
     </div>
   </div>
@@ -822,6 +723,7 @@
   </div>
 
   <script src="vendors/base/vendor.bundle.base.js"></script>
+  <script src="js/sidebar-state-boot.js"></script>
   <script src="vendors/chart.js/Chart.min.js"></script>
   <script src="vendors/datatables.net/jquery.dataTables.js"></script>
   <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
@@ -1070,6 +972,97 @@
       function normalizeCaseId(raw) {
         var s = (raw || '').toString().trim().toLowerCase();
         return s || 'npc';
+      }
+
+      /** 同一会话内记住「细筛已完成」，从报告页返回分析页时恢复终态，避免重复跑细筛 */
+      var ANALYSIS_STATE_KEY_PREFIX = 'pv_analysis_fine_done_';
+
+      function analysisSessionStorageKey(caseId) {
+        return ANALYSIS_STATE_KEY_PREFIX + normalizeCaseId(caseId || 'npc');
+      }
+
+      function persistAnalysisFineComplete() {
+        try {
+          var cid = normalizeCaseId(currentCaseId || 'npc');
+          sessionStorage.setItem(analysisSessionStorageKey(cid), JSON.stringify({
+            caseId: cid,
+            fineComplete: true,
+            coarseComplete: true,
+            at: Date.now()
+          }));
+        } catch (e) {}
+      }
+
+      function clearAnalysisSessionStateForCase(caseId) {
+        try {
+          sessionStorage.removeItem(analysisSessionStorageKey(caseId));
+        } catch (e) {}
+      }
+
+      function findLastFinalHeatmapStep() {
+        var steps = scriptSteps || [];
+        for (var i = steps.length - 1; i >= 0; i--) {
+          if (steps[i] && steps[i].type === 'show_final_heatmap') return steps[i];
+        }
+        return null;
+      }
+
+      function restoreFineCompletedUi() {
+        coarseFinished = true;
+        fineFinished = true;
+        running = false;
+        paused = false;
+        currentRunMode = 'idle';
+        scriptIndex = scriptSteps.length;
+        if (timerId) {
+          clearTimeout(timerId);
+          timerId = null;
+        }
+        closeCompleteOverlayIfVisible();
+        var ov = document.getElementById('analysis_complete_overlay');
+        if (ov) {
+          ov.style.display = 'none';
+          ov.setAttribute('aria-hidden', 'true');
+        }
+        clearHeatmapOverlays();
+        clearHighlight();
+        var finalStep = findLastFinalHeatmapStep();
+        if (finalStep) runJsonStep(finalStep);
+        completeAllFlowSteps();
+        setOverallProgress(100);
+        setCurrentStepText('分析完成');
+        showPatchBrowseControls(true);
+        setPatchSwitchArrowsVisible(true);
+        var cb = document.getElementById('start_coarse_btn');
+        var fb = document.getElementById('start_fine_btn');
+        if (cb) cb.disabled = false;
+        if (fb) fb.disabled = false;
+        setFineStartInModalVisible(false);
+        modalPatchIds = [];
+        (fineScriptSteps || []).forEach(function (st) {
+          if (st && st.type === 'show_patch_modal' && st.patch_id) {
+            if (modalPatchIds.indexOf(st.patch_id) === -1) modalPatchIds.push(st.patch_id);
+          }
+        });
+        if (modalPatchIds.length) modalPatchIndex = 0;
+        applyHeatmapOpacity();
+        ensureSidebarIconOnlyForAnalysis();
+        setAnalysisRunningUi(false);
+      }
+
+      function tryRestoreAnalysisSessionState() {
+        try {
+          var cid = normalizeCaseId(currentCaseId || 'npc');
+          var raw = sessionStorage.getItem(analysisSessionStorageKey(cid));
+          if (!raw) return false;
+          var data = JSON.parse(raw);
+          if (!data || !data.fineComplete || normalizeCaseId(data.caseId) !== cid) return false;
+          if (!scriptSteps || !scriptSteps.length) return false;
+          restoreFineCompletedUi();
+          return true;
+        } catch (e) {
+          return false;
+        }
       }
 
       /** fetch 失败时尝试 XHR（部分环境对 file:// 仍不可用，需改用 HTTP 访问） */
@@ -1491,6 +1484,7 @@
         if (cnt) cnt.textContent = pvGalleryIndex + 1 + ' / ' + pvGalleryItems.length;
         if (fnEl) fnEl.textContent = fileNameFromUrl(overlayUrl);
         applyPatchGalleryOpacity();
+        applyPatchGalleryLayout();
         initZoomable(stackEl || img, 'gallery_image');
         resetZoom('gallery_image');
       }
@@ -1511,19 +1505,30 @@
         var prevIcon = prev.querySelector('.mdi');
         var nextIcon = next.querySelector('.mdi');
         var isHeatmap = pvGalleryMode === 'heatmap';
+        var cur = pvGalleryItems[pvGalleryIndex] || {};
+        /* 全景概览（叠在 stitch 上的长条热力图）：上下箭头；Patch 热力图与其它：左右箭头 */
+        var useVerticalNav = isHeatmap && cur.navVertical === true;
         if (modalEl) modalEl.classList.toggle('pv-gallery-heatmap-mode', isHeatmap);
-        row.classList.toggle('flex-column', isHeatmap);
-        prev.classList.toggle('pv-gallery-vertical', isHeatmap);
-        next.classList.toggle('pv-gallery-vertical', isHeatmap);
-        prev.classList.toggle('mr-2', !isHeatmap);
-        next.classList.toggle('ml-2', !isHeatmap);
+        row.classList.toggle('flex-column', useVerticalNav);
+        prev.classList.toggle('pv-gallery-vertical', useVerticalNav);
+        next.classList.toggle('pv-gallery-vertical', useVerticalNav);
+        prev.classList.toggle('mr-2', !useVerticalNav);
+        next.classList.toggle('ml-2', !useVerticalNav);
         if (isHeatmap) {
-          prev.classList.add('mb-2');
-          next.classList.add('mt-2');
-          next.classList.remove('mb-2');
-          if (prevIcon) prevIcon.className = 'mdi mdi-chevron-up';
-          if (nextIcon) nextIcon.className = 'mdi mdi-chevron-down';
           opWrap.classList.remove('d-none');
+          if (useVerticalNav) {
+            prev.classList.add('mb-2');
+            next.classList.add('mt-2');
+            next.classList.remove('mb-2');
+            if (prevIcon) prevIcon.className = 'mdi mdi-chevron-up';
+            if (nextIcon) nextIcon.className = 'mdi mdi-chevron-down';
+          } else {
+            prev.classList.add('mb-2');
+            next.classList.add('mb-2');
+            next.classList.remove('mt-2');
+            if (prevIcon) prevIcon.className = 'mdi mdi-chevron-left';
+            if (nextIcon) nextIcon.className = 'mdi mdi-chevron-right';
+          }
         } else {
           prev.classList.add('mb-2');
           next.classList.add('mb-2');
@@ -1557,10 +1562,11 @@
         }
         pvGalleryMode = mode === 'heatmap' ? 'heatmap' : 'patch';
         pvGalleryItems = items.map(function (it) {
-          if (typeof it === 'string') return { overlayUrl: it, baseUrl: '' };
+          if (typeof it === 'string') return { overlayUrl: it, baseUrl: '', navVertical: false };
           return {
             overlayUrl: it.overlayUrl || it.url || '',
-            baseUrl: it.baseUrl || ''
+            baseUrl: it.baseUrl || '',
+            navVertical: it.navVertical === true
           };
         }).filter(function (it) { return !!it.overlayUrl; });
         if (!pvGalleryItems.length) {
@@ -1669,25 +1675,29 @@
         if (initialHm) {
           groups.push({
             overlayCandidates: [resolveAssetUrl(initialHm)],
-            baseCandidates: stitchCandidates.slice()
+            baseCandidates: stitchCandidates.slice(),
+            navVertical: true
           });
         }
         if (finalHm) {
           groups.push({
             overlayCandidates: [withNoCache(resolveAssetUrl(finalHm))],
-            baseCandidates: stitchCandidates.slice()
+            baseCandidates: stitchCandidates.slice(),
+            navVertical: true
           });
         }
         if (forcedFinalHm && forcedFinalHm !== finalHm) {
           groups.push({
             overlayCandidates: [withNoCache(resolveAssetUrl(forcedFinalHm))],
-            baseCandidates: stitchCandidates.slice()
+            baseCandidates: stitchCandidates.slice(),
+            navVertical: true
           });
         }
         files.forEach(function (patchId) {
           groups.push({
             overlayCandidates: buildPatchHeatmapCandidates('', patchId),
-            baseCandidates: buildPatchImageCandidates('', patchId)
+            baseCandidates: buildPatchImageCandidates('', patchId),
+            navVertical: false
           });
         });
         if (!groups.length) {
@@ -1702,7 +1712,7 @@
             var ov = pair[0];
             var base = pair[1];
             if (!ov) return null;
-            return { overlayUrl: ov, baseUrl: base || '' };
+            return { overlayUrl: ov, baseUrl: base || '', navVertical: g.navVertical === true };
           });
         })).then(function (items) {
           items = items.filter(Boolean);
@@ -2247,6 +2257,7 @@
             appendLog('AI: 粗筛阶段完成。请点击「开始细筛」进行逐 patch 细致分析。');
           } else {
             fineFinished = true;
+            persistAnalysisFineComplete();
             completeAllFlowSteps();
             setOverallProgress(100);
             setCurrentStepText('分析完成');
@@ -2363,6 +2374,9 @@
       }
 
       function resetExecutionState(clearLog) {
+        if (clearLog) {
+          clearAnalysisSessionStateForCase(currentCaseId);
+        }
         if (timerId) clearTimeout(timerId);
         timerId = null;
         paused = false;
@@ -2467,7 +2481,11 @@
             var split = splitScriptPhases(scriptSteps);
             coarseScriptSteps = split.coarse;
             fineScriptSteps = split.fine;
-            appendLog('数据已就绪，请先点击「开始粗筛」，粗筛完成后再点击「开始细筛」。');
+            if (tryRestoreAnalysisSessionState()) {
+              appendLog('已恢复细筛完成状态：本次会话内可继续浏览 Patch、生成报告或点击「重新分析」从头开始。');
+            } else {
+              appendLog('数据已就绪，请先点击「开始粗筛」，粗筛完成后再点击「开始细筛」。');
+            }
           })
           .catch(function () {
             scriptSteps = [];
@@ -2515,6 +2533,7 @@
 
       function onReportClick() {
         if (reportGenTimer) return;
+        if (fineFinished) persistAnalysisFineComplete();
         var url = buildReportViewUrl();
         var ov = document.getElementById('pv_report_generating_overlay');
         if (ov) {

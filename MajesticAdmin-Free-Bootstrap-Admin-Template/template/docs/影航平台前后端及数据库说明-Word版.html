@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>影航多尺度病理 AI 平台 — 前后端功能与数据库设计说明</title>
+  <!--
+    使用说明：用 Microsoft Word 打开本文件 →「另存为」→ 选择「Word 文档 (*.docx)」即可得到可编辑的 Word 版。
+    亦可将全文复制到 Word 中，建议先打开本 HTML 再另存，表格与标题层级保留较好。
+  -->
+  <style type="text/css">
+    body { font-family: "Microsoft YaHei", "SimSun", sans-serif; font-size: 11pt; line-height: 1.55; color: #222; max-width: 900px; margin: 24px auto; padding: 0 16px 48px; }
+    h1 { font-size: 18pt; border-bottom: 2px solid #165DFF; padding-bottom: 8px; }
+    h2 { font-size: 14pt; margin-top: 28px; color: #0f172a; }
+    h3 { font-size: 12pt; margin-top: 18px; color: #334155; }
+    p, li { text-align: justify; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10.5pt; }
+    th, td { border: 1px solid #cbd5e1; padding: 6px 8px; vertical-align: top; }
+    th { background: #f1f5f9; font-weight: 600; }
+    code, pre { font-family: Consolas, "Courier New", monospace; font-size: 9.5pt; background: #f8fafc; }
+    pre { padding: 10px; border: 1px solid #e2e8f0; white-space: pre-wrap; word-break: break-all; }
+    .note { background: #eff6ff; border-left: 4px solid #165DFF; padding: 8px 12px; margin: 12px 0; font-size: 10pt; }
+    .muted { color: #64748b; font-size: 10pt; }
+  </style>
+</head>
+<body>
+
+<h1>影航多尺度病理 AI 平台<br><span style="font-size:12pt;font-weight:normal;color:#64748b;">前后端功能对应说明与数据库设计（Word 可导入版）</span></h1>
+
+<p class="muted">文档用途：答辩、验收、对内设计说明。本文按当前前端已展示的功能，假定配套后端服务已建设完成，描述接口职责、核心逻辑与数据库表结构。演示环境可采用静态 JSON 模拟；生产环境由下列 API 与任务流水线承载。</p>
+
+<h2>一、前端功能与页面（与后端对应关系）</h2>
+
+<table>
+  <tr><th>前端页面/模块</th><th>用户可见功能</th><th>对应后端能力（概要）</th></tr>
+  <tr>
+    <td><code>login.html</code></td>
+    <td>登录、会话建立</td>
+    <td>认证服务：<code>POST /api/v1/auth/login</code>，返回 JWT（Access + Refresh）或 Session Cookie；密码哈希存储、登录审计。</td>
+  </tr>
+  <tr>
+    <td><code>index.html</code></td>
+    <td>工作台、待办摘要、快捷入口、导出 CSV（演示）</td>
+    <td><code>GET /api/v1/dashboard/summary</code> 待办与统计；导出对接报表服务或前端聚合。</td>
+  </tr>
+  <tr>
+    <td><code>upload.html</code></td>
+    <td>切片上传、病例编号提示</td>
+    <td><code>POST /api/v1/wsi/uploads</code> 分片/直传至对象存储；写 <code>wsi_files</code> 元数据；可选病毒扫描回调。</td>
+  </tr>
+  <tr>
+    <td><strong><code>analysis.html</code></strong></td>
+    <td>病例信息、全景切片、粗筛/细筛、暂停继续、热力图透明度、AI 日志、Patch 标记与弹窗、热力图/Patch 图库、生成报告、下载病例描述与诊断报告</td>
+    <td>病例配置查询、<strong>分析任务创建与状态轮询/SSE/WebSocket</strong>、热力图与 Patch 资源 URL 签发、日志流、报告生成任务。见第二节 API 清单。</td>
+  </tr>
+  <tr>
+    <td><code>report_view.html</code></td>
+    <td>诊断报告 PDF 内嵌预览、下载、返回分析</td>
+    <td><code>GET /api/v1/reports/{id}/file</code> 或签名 URL；权限与病例绑定校验。</td>
+  </tr>
+  <tr>
+    <td><code>report.html</code></td>
+    <td>报告列表、筛选（编号、状态、时间）</td>
+    <td><code>GET /api/v1/reports</code> 分页与条件查询；当前演示页可为前端过滤，生产应由服务端筛选。</td>
+  </tr>
+  <tr>
+    <td><code>task.html</code> / <code>account.html</code></td>
+    <td>任务中心、账号与套餐（展示）</td>
+    <td><code>GET /api/v1/tasks</code>、计费与套餐模块（可选独立微服务）。</td>
+  </tr>
+</table>
+
+<h2>二、后端服务划分（逻辑架构）</h2>
+
+<table>
+  <tr><th>服务</th><th>职责</th></tr>
+  <tr><td>API 网关 / BFF</td><td>路由、限流、JWT 校验、统一错误码、CORS。</td></tr>
+  <tr><td>用户与权限服务</td><td>用户、角色（如病理医生/管理员）、科室与数据范围。</td></tr>
+  <tr><td>病例与 WSI 服务</td><td>病例 CRUD、切片文件元数据、与存储桶路径映射。</td></tr>
+  <tr><td>分析编排服务</td><td>创建粗筛/细筛任务、状态机、对接消息队列；聚合推理子任务结果。</td></tr>
+  <tr><td>推理工作节点（GPU）</td><td>组织分割、特征提取、热力图生成、Patch 级分类/描述；可水平扩展。</td></tr>
+  <tr><td>报告服务</td><td>根据分析结果渲染 PDF（模板引擎 + LaTeX/Word 转 PDF）、版本号、电子签名预留。</td></tr>
+  <tr><td>对象存储</td><td>MinIO / 阿里云 OSS / 本地 NAS；存 WSI、热力图、Patch 图、报告 PDF、病例描述 docx。</td></tr>
+  <tr><td>消息队列</td><td>RabbitMQ / Redis Stream：异步分析、重试、死信。</td></tr>
+</table>
+
+<h2>三、核心 REST API（与前端行为对应）</h2>
+
+<p>以下为与「智能分析」页强相关的接口约定（路径与字段可按团队规范微调）。</p>
+
+<table>
+  <tr><th>方法</th><th>路径</th><th>说明</th></tr>
+  <tr><td>GET</td><td><code>/api/v1/cases/{case_id}</code></td><td>病例详情（名称、切片编号、状态）。对应原 <code>case_config</code> 中的业务字段。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/cases/{case_id}/viewer-config</code></td><td>阅片器配置：全景图 URL、初筛/终筛热力图 URL、Patch 列表与描述、高危 Patch 列表等。前端用于替换静态 <code>case_config_*.json</code>。</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/cases/{case_id}/tasks</code></td><td>创建分析任务，Body：<code>{ "stage": "coarse" | "fine" }</code>。返回 <code>task_id</code>。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/tasks/{task_id}</code></td><td>任务状态：<code>pending|running|paused|completed|failed</code>、总进度 0–100、当前子步骤名称。</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/tasks/{task_id}/pause</code></td><td>暂停（推理节点协作取消或标记）。</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/tasks/{task_id}/resume</code></td><td>继续。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/tasks/{task_id}/events</code></td><td>分页拉取已产生的步骤事件（日志行、热力图就绪、Patch 高亮指令等）。也可用 <strong>SSE</strong>：<code>/api/v1/tasks/{task_id}/stream</code> 推送。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/cases/{case_id}/assets/{asset_key}</code></td><td>或对资源返回 302 至带过期时间的签名 URL（热力图、Patch 图）。</td></tr>
+  <tr><td>POST</td><td><code>/api/v1/cases/{case_id}/reports/generate</code></td><td>触发生成诊断报告 PDF（异步）；完成后 <code>reports</code> 表更新。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/reports/{report_id}/download</code></td><td>下载诊断报告 PDF（权限校验）。对应「下载报告」按钮。</td></tr>
+  <tr><td>GET</td><td><code>/api/v1/cases/{case_id}/documents/description</code></td><td>下载病例描述 Word。对应「下载描述文件」。</td></tr>
+</table>
+
+<h2>四、核心后端逻辑说明（文字）</h2>
+
+<h3>4.1 分析任务流水线</h3>
+<p>用户在前端点击「开始粗筛」或「开始细筛」后，API 在 <code>analysis_tasks</code> 中创建记录，状态为 <code>running</code>，并向队列投递作业。编排服务按阶段调用推理节点：有效组织提取 → 全局特征 → 可疑区域定位 → 热力值计算 → 图层对齐；粗筛输出初筛热力图与候选 Patch 列表，细筛对候选 Patch 做高分辨率推理与小热力图生成。进度与日志通过事件表或流式通道推送给前端，前端用进度条与「AI 诊断思考日志」区域展示，替代演示环境中的纯本地 JSON 时间线。</p>
+
+<h3>4.2 静态资源与缓存</h3>
+<p>热力图与 Patch 文件存放在对象存储；API 返回短期有效的签名 URL，避免浏览器缓存旧图（与前端 <code>withNoCache</code> 策略一致）。终筛热力图路径在配置中明确指向「最终概览」资源。</p>
+
+<h3>4.3 报告生成</h3>
+<p>「生成报告」触发生成任务：汇总病例元数据、各 Patch AI 结论、可选医生复核字段，套入病理报告模板生成 PDF，写入存储并在 <code>reports</code> 表记录版本。前端加载页展示前可先轮询「生成中」状态（与当前 10 秒过渡动画可对应真实异步）。</p>
+
+<h2>五、数据库设计（PostgreSQL 示例）</h2>
+
+<p>以下为与上述功能直接相关的核心表；字段类型为示意，实施时可按 DBA 规范调整。</p>
+
+<h3>5.1 用户与权限</h3>
+<pre>-- 用户表
+CREATE TABLE users (
+  id              BIGSERIAL PRIMARY KEY,
+  username        VARCHAR(64) NOT NULL UNIQUE,
+  password_hash   VARCHAR(255) NOT NULL,
+  display_name    VARCHAR(128),
+  role            VARCHAR(32) NOT NULL DEFAULT 'pathologist', -- pathologist | admin
+  is_active       BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);</pre>
+
+<h3>5.2 病例与切片文件</h3>
+<pre>CREATE TABLE cases (
+  id              BIGSERIAL PRIMARY KEY,
+  case_code       VARCHAR(64) NOT NULL UNIQUE,  -- 对应前端 case_id / 业务病例号
+  case_name       VARCHAR(256) NOT NULL,
+  slide_id        VARCHAR(128),
+  cancer_type     VARCHAR(64),
+  status          VARCHAR(32) NOT NULL DEFAULT 'draft',
+  created_by      BIGINT REFERENCES users(id),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE wsi_files (
+  id              BIGSERIAL PRIMARY KEY,
+  case_id         BIGINT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  storage_uri     TEXT NOT NULL,
+  pyramid_meta    JSONB,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);</pre>
+
+<h3>5.3 分析任务与事件（对应粗筛/细筛、日志、进度）</h3>
+<pre>CREATE TABLE analysis_tasks (
+  id              BIGSERIAL PRIMARY KEY,
+  case_id         BIGINT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  stage           VARCHAR(16) NOT NULL,  -- coarse | fine
+  status          VARCHAR(16) NOT NULL, -- pending | running | paused | completed | failed
+  progress        NUMERIC(5,2) NOT NULL DEFAULT 0,
+  current_step    VARCHAR(128),
+  error_message   TEXT,
+  started_at      TIMESTAMPTZ,
+  finished_at     TIMESTAMPTZ
+);
+
+CREATE TABLE analysis_events (
+  id              BIGSERIAL PRIMARY KEY,
+  task_id         BIGINT NOT NULL REFERENCES analysis_tasks(id) ON DELETE CASCADE,
+  seq             INT NOT NULL,
+  event_type      VARCHAR(32) NOT NULL, -- log | step_progress | heatmap_ready | patch_highlight | ...
+  payload         JSONB NOT NULL,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_analysis_events_task_seq ON analysis_events(task_id, seq);</pre>
+
+<h3>5.4 分析产物元数据（热力图、Patch）</h3>
+<pre>CREATE TABLE analysis_assets (
+  id              BIGSERIAL PRIMARY KEY,
+  case_id         BIGINT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  task_id         BIGINT REFERENCES analysis_tasks(id),
+  asset_type      VARCHAR(32) NOT NULL, -- stitch | heatmap_initial | heatmap_final | patch | patch_heatmap
+  storage_uri     TEXT NOT NULL,
+  extra           JSONB,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE patch_findings (
+  id              BIGSERIAL PRIMARY KEY,
+  case_id         BIGINT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  patch_key       VARCHAR(256) NOT NULL,
+  label           VARCHAR(256),
+  description     TEXT,
+  risk_level      VARCHAR(32),
+  UNIQUE (case_id, patch_key)
+);</pre>
+
+<h3>5.5 报告与文档</h3>
+<pre>CREATE TABLE reports (
+  id              BIGSERIAL PRIMARY KEY,
+  case_id         BIGINT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+  version         INT NOT NULL DEFAULT 1,
+  status          VARCHAR(32) NOT NULL DEFAULT 'draft',
+  pdf_storage_uri TEXT,
+  diagnosis_summary TEXT,
+  created_by      BIGINT REFERENCES users(id),
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);</pre>
+
+<h2>六、核心后端代码示例（Python / FastAPI 风格，说明用）</h2>
+<p>下列为「创建分析任务」与「查询任务状态」的精简示例，用于文档或答辩时说明后端代码形态，非仓库内现成文件。</p>
+
+<pre>from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+router = APIRouter(prefix="/api/v1", tags=["tasks"])
+
+@router.post("/cases/{case_id}/tasks")
+def create_task(case_id: str, body: dict, db: Session = Depends(get_db), user=Depends(require_user)):
+    case = get_case_by_code(db, case_id)
+    if not case:
+        raise HTTPException(404, "case not found")
+    task = AnalysisTask(case_id=case.id, stage=body.get("stage", "coarse"), status="pending")
+    db.add(task)
+    db.commit()
+    enqueue_analysis(task.id)  # 投递 Celery / RQ
+    return {"task_id": task.id}
+
+@router.get("/tasks/{task_id}")
+def get_task(task_id: int, db: Session = Depends(get_db), user=Depends(require_user)):
+    task = db.query(AnalysisTask).get(task_id)
+    if not task:
+        raise HTTPException(404)
+    return {
+        "status": task.status,
+        "progress": float(task.progress),
+        "current_step": task.current_step,
+    }</pre>
+
+<h2>七、前端与后端对接要点（实现层面）</h2>
+<ul>
+  <li>鉴权：所有 <code>/api/v1</code> 请求携带 <code>Authorization: Bearer &lt;token&gt;</code>。</li>
+  <li><code>analysis.html</code> 中：将 <code>loadCaseConfig</code> 改为请求 <code>/cases/{id}/viewer-config</code>；将 <code>executeScript</code> 驱动的演示流改为「订阅任务事件流 + 根据事件类型更新 UI」，保留相同组件（进度条、日志、热力图、Patch 弹窗）。</li>
+  <li>资源 URL：响应中返回 HTTPS 完整路径或签名 URL，前端继续用 <code>&lt;img&gt;</code> / 叠加层加载。</li>
+</ul>
+
+<div class="note">
+<strong>关于 Word：</strong>请使用 <strong>Microsoft Word</strong>「打开」本 HTML 文件，然后「另存为」→ 选择 <strong>Word 文档 (*.docx)</strong>。若表格在个别版本 Word 中需微调，可在 Word 中全选后统一设置字体为「微软雅黑」、字号为小四/五号。
+</div>
+
+<p class="muted">— 文档结束 —</p>
+
+</body>
+</html>

@@ -95,7 +95,8 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border-radius: 50%;
+      /* 与侧栏 .menu-icon 一致：圆角方块，非圆形 */
+      border-radius: 10px;
     }
     .pv-patch-gallery-modal .pv-gallery-nav.pv-gallery-vertical {
       margin-left: 0 !important;
@@ -108,6 +109,15 @@
     .pv-patch-gallery-modal .pv-patch-gallery-frame {
       min-width: 0;
       max-width: 100%;
+      flex: 1 1 auto;
+    }
+    /* 横向导航时不换行，箭头始终在图左/右，不压到图上方或挡住图心 */
+    .pv-patch-gallery-modal #patch_gallery_row.pv-gallery-nav-row--horizontal {
+      flex-wrap: nowrap !important;
+      width: 100%;
+    }
+    .pv-patch-gallery-modal #patch_gallery_row.pv-gallery-nav-row--horizontal .pv-gallery-nav {
+      flex-shrink: 0;
     }
     .pv-patch-gallery-modal #patch_gallery_img {
       max-height: 75vh;
@@ -144,7 +154,7 @@
       max-height: 62vh;
     }
     .pv-patch-gallery-modal.pv-gallery-heatmap-mode #patch_gallery_dialog {
-      max-width: min(82vw, 1180px);
+      max-width: min(92vw, 920px);
     }
 
     /* 病灶高倍观察：壳层样式见 pv-theme-glass.css */
@@ -216,8 +226,7 @@
       z-index: 18;
       width: 38px;
       height: 38px;
-      border-radius: 50%;
-      color: #165dff;
+      border-radius: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -446,7 +455,7 @@
   </div>
 
   <div class="modal fade pv-patch-gallery-modal" id="patch_gallery_modal" tabindex="-1" aria-labelledby="patch_gallery_title" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" id="patch_gallery_dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered" id="patch_gallery_dialog">
       <div class="modal-content">
         <div class="modal-header py-3 pr-4 pv-modal-header-premium">
           <div class="d-flex align-items-start">
@@ -461,10 +470,10 @@
         </div>
         <div class="modal-body bg-light py-3 py-lg-4 pv-patch-gallery-modal-body">
           <div class="row align-items-stretch pv-gallery-split">
-            <div class="col-12 col-lg-8 mb-3 mb-lg-0 pv-gallery-col pv-gallery-col--viewer">
+            <div class="col-12 pv-gallery-col pv-gallery-col--viewer">
               <p class="pv-modal-section-label mb-2"><i class="mdi mdi-monitor-eye text-primary"></i> 阅片区</p>
               <div class="pv-gallery-viewer-panel">
-                <div class="d-flex align-items-center justify-content-center flex-wrap" id="patch_gallery_row">
+                <div class="d-flex align-items-center justify-content-center pv-patch-gallery-nav-row" id="patch_gallery_row">
                   <button type="button" class="btn btn-outline-primary pv-gallery-nav mr-2 mb-2" id="patch_gallery_prev" aria-label="上一张">
                     <i class="mdi mdi-chevron-left"></i>
                   </button>
@@ -483,18 +492,6 @@
                   <input id="patch_gallery_opacity" type="range" class="form-range mb-1" min="0" max="100" value="65">
                 </div>
               </div>
-            </div>
-            <div class="col-12 col-lg-4 pv-gallery-col pv-gallery-col--side">
-              <p class="pv-modal-section-label mb-2"><i class="mdi mdi-information-outline text-primary"></i> 浏览说明</p>
-              <div class="pv-gallery-side-card">
-                <ul class="pv-gallery-side-list small text-muted mb-0 pl-3">
-                  <li>全景概览类长条图：切换按钮在阅片区<strong>上、下</strong>，箭头朝<strong>上 / 下</strong>；其它图片：按钮在<strong>左、右</strong>两侧，箭头朝<strong>左 / 右</strong>。</li>
-                  <li>热力图模式下可拖动滑块调节叠加热力深浅。</li>
-                  <li>支持点击放大查看细节（若已开启灯箱）。</li>
-                  <li>需要保存时使用顶栏「下载当前图片」。</li>
-                </ul>
-              </div>
-              <div class="pv-gallery-side-deco" aria-hidden="true"></div>
             </div>
           </div>
           <div class="pv-gallery-footer-bar mt-3">
@@ -1304,22 +1301,63 @@
         }, 80);
       }
 
+      function showPatchObserveModal() {
+        var patchModalEl = document.getElementById('patch_modal');
+        if (!patchModalEl) return;
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+          bootstrap.Modal.getOrCreateInstance(patchModalEl).show();
+        } else if (window.jQuery && jQuery.fn.modal) {
+          jQuery(patchModalEl).modal('show');
+        }
+        window.setTimeout(function () {
+          syncPatchModalLog();
+        }, 60);
+      }
+
+      /**
+       * 「放大查看」：优先打开病灶弹窗（可点击图进灯箱）；细筛完成后已恢复会话时可能尚未加载 patch 图，需先按 modalPatchIds 拉图。
+       * 无 Patch 时依次尝试主阅片/热力图层灯箱，最后打开 AI 日志大窗。
+       */
       function openPreferredExpandModal() {
         var patchModalEl = document.getElementById('patch_modal');
         var patchImgEl = document.getElementById('patch_modal_img');
-        var hasPatchContent = !!(patchImgEl && patchImgEl.getAttribute('src'));
-        if (patchModalEl && hasPatchContent) {
-          if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-            bootstrap.Modal.getOrCreateInstance(patchModalEl).show();
-          } else if (window.jQuery && jQuery.fn.modal) {
-            jQuery(patchModalEl).modal('show');
-          }
-          window.setTimeout(function () {
-            syncPatchModalLog();
-          }, 60);
+        if (!patchModalEl || !patchImgEl) {
+          openAiLogModal();
           return;
         }
-        appendLog('提示：当前暂无病灶弹窗内容，请先等待或打开一个 Patch 弹窗后再使用放大查看。');
+        var hasSrc = !!(patchImgEl.getAttribute('src') || '').trim();
+
+        if (!hasSrc && fineFinished && modalPatchIds.length) {
+          if (modalPatchIndex < 0 || modalPatchIndex >= modalPatchIds.length) modalPatchIndex = 0;
+          updatePatchModalByIndex();
+        }
+
+        hasSrc = !!(patchImgEl.getAttribute('src') || '').trim();
+        if (hasSrc) {
+          showPatchObserveModal();
+          return;
+        }
+
+        if (fineFinished && modalPatchIds.length) {
+          showPatchObserveModal();
+          return;
+        }
+
+        var sliceEl = document.getElementById('slice_base_image');
+        if (sliceEl && (sliceEl.getAttribute('src') || '').trim()) {
+          openImageLightboxFromElement(sliceEl);
+          return;
+        }
+
+        try {
+          var refOv = getReferenceImageForOverlay();
+          if (refOv && (refOv.getAttribute('src') || '').trim()) {
+            openImageLightboxFromElement(refOv);
+            return;
+          }
+        } catch (eRef) {}
+
+        openAiLogModal();
       }
 
       var pvGalleryItems = [];
@@ -1485,6 +1523,17 @@
         if (fnEl) fnEl.textContent = fileNameFromUrl(overlayUrl);
         applyPatchGalleryOpacity();
         applyPatchGalleryLayout();
+        function onGalleryImageSized() {
+          applyPatchGalleryLayout();
+        }
+        if (overlayUrl) {
+          if (img.complete && img.naturalWidth) {
+            onGalleryImageSized();
+          } else {
+            img.addEventListener('load', onGalleryImageSized, { once: true });
+            img.addEventListener('error', onGalleryImageSized, { once: true });
+          }
+        }
         initZoomable(stackEl || img, 'gallery_image');
         resetZoom('gallery_image');
       }
@@ -1506,10 +1555,21 @@
         var nextIcon = next.querySelector('.mdi');
         var isHeatmap = pvGalleryMode === 'heatmap';
         var cur = pvGalleryItems[pvGalleryIndex] || {};
-        /* 全景概览（叠在 stitch 上的长条热力图）：上下箭头；Patch 热力图与其它：左右箭头 */
+        /* 元数据标为竖向长条时仍按实际像素判断：非「很长」的图用左右箭头，避免挡图心文字 */
         var useVerticalNav = isHeatmap && cur.navVertical === true;
+        var gImg = document.getElementById('patch_gallery_img');
+        if (useVerticalNav && gImg && gImg.naturalWidth > 0 && gImg.naturalHeight > 0) {
+          var rw = gImg.naturalWidth;
+          var rh = gImg.naturalHeight;
+          var portraitLong = rh / rw >= 1.42;
+          var landscapeLong = rw / rh >= 1.75;
+          if (!portraitLong && !landscapeLong) {
+            useVerticalNav = false;
+          }
+        }
         if (modalEl) modalEl.classList.toggle('pv-gallery-heatmap-mode', isHeatmap);
         row.classList.toggle('flex-column', useVerticalNav);
+        row.classList.toggle('pv-gallery-nav-row--horizontal', !useVerticalNav);
         prev.classList.toggle('pv-gallery-vertical', useVerticalNav);
         next.classList.toggle('pv-gallery-vertical', useVerticalNav);
         prev.classList.toggle('mr-2', !useVerticalNav);
@@ -2263,6 +2323,13 @@
             setCurrentStepText('分析完成');
             showPatchBrowseControls(true);
             setPatchSwitchArrowsVisible(true);
+            modalPatchIds = [];
+            (fineScriptSteps || []).forEach(function (st) {
+              if (st && st.type === 'show_patch_modal' && st.patch_id) {
+                if (modalPatchIds.indexOf(st.patch_id) === -1) modalPatchIds.push(st.patch_id);
+              }
+            });
+            if (modalPatchIds.length) modalPatchIndex = 0;
             document.getElementById('analysis_complete_overlay').style.display = 'flex';
             document.getElementById('analysis_complete_overlay').setAttribute('aria-hidden', 'false');
             var cb2 = document.getElementById('start_coarse_btn');
